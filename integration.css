@@ -76,3 +76,24 @@
  .solo-note-buttons button{min-width:60px;min-height:70px;padding:8px 10px}
  .solo-practice-actions button{flex:1;text-align:center;min-height:38px}
 }
+
+/* Share the analysis chapter map styles without inheriting its page layout. */
+#practiceMap{--fa-voice:#6c9076;--fa-solo:#c78865;--fa-talk:#a9b09d;--fa-outro:#8395a1;min-width:0;max-width:100%;padding-top:0;margin-bottom:6px}
+#practiceMap .fa-map-title{flex-wrap:wrap}
+#practiceMap .fa-map-legend{flex-wrap:wrap}
+#practiceMap .fa-timeline{width:100%;min-width:0}
+#practiceMap .fa-chapters{position:relative;max-width:100%;min-width:0;overscroll-behavior-x:contain;scroll-padding-inline:4px}
+#practiceMap .fa-chapter{max-width:min(310px,85vw)}
+#practiceMap .fa-chapter>span:last-child{min-width:0}
+#practiceMap .fa-chapter strong{overflow-wrap:anywhere}
+#practiceMap button:focus-visible{outline:3px solid #a8b580;outline-offset:3px}
+@media(max-width:540px){
+ #practiceMap{margin-bottom:0;padding-bottom:20px}
+ #practiceMap .fa-map-hint{font-size:11px;line-height:1.8}
+ #practiceMap .fa-timeline{height:44px;gap:2px}
+ #practiceMap .fa-timeline-part{min-width:12px}
+ #practiceMap .fa-timeline-part span{font-size:9px}
+ #practiceMap .fa-chapter{min-width:150px;min-height:58px}
+ #practiceMap .fa-chapter strong{font-size:11px}
+ #practiceMap .fa-chapter small{font-size:9px}
+}

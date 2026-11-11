@@ -1,12 +1,19 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="从 Currently 的完整演奏学习调性、根音级数、和弦作用、节奏与吉他独奏，再回到六弦指板练习。"><title>弦上 · Currently 全曲分析与吉他练习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="从 Currently 的完整演奏学习调性、根音级数、和弦作用、节奏与吉他独奏，再回到六弦指板练习。"><title>弦上 · Currently 全曲分析与吉他练习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261111-practice-sections"></head>
 <body>
 <header class="topbar"><a class="brand" href="#"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="工作模式"><button id="analysisMode" class="nav-button active">全曲分析</button><button id="lessonMode" class="nav-button">指板练习</button><button id="freeMode" class="nav-button">自由指板</button></nav><button class="quiet" id="helpButton">怎样看指板 <span>?</span></button></header>
 <main>
 <section id="analysisView" aria-label="完整演奏分析"></section>
 <section id="practiceView" hidden>
 <div class="page-heading"><div><div class="eyebrow">从第一句到最后一个落点。</div><h1>跟着整首歌，练指板<span class="title-dot">。</span></h1><p>选一个段落，沿着根音走向练按法；唱歌时看和弦，Solo 时看旋律。</p></div><div class="version"><span class="green-dot"></span> Currently · 全曲练习</div></div>
+<section id="practiceMap" class="fa-map practice-map" aria-label="全曲指板练习段落地图">
+ <div class="fa-map-title"><h3>整首歌，现在走到哪里？</h3><div class="fa-map-legend" aria-label="段落类型"><span><i class="voice" aria-hidden="true"></i>伴唱</span><span><i class="solo" aria-hidden="true"></i>Solo / 器乐</span><span><i class="talk" aria-hidden="true"></i>谈话 / 前奏</span><span><i class="outro" aria-hidden="true"></i>收束</span></div></div>
+ <p class="fa-map-hint">点击色块或段落卡片，视频、当前按法和练习列表一起切换。</p>
+ <div id="practiceTimeline" class="fa-timeline" role="group" aria-label="按时间选择练习段落" aria-controls="songVideo fretboard lessonSteps"><span id="practicePlayhead" class="fa-playhead" aria-hidden="true"></span></div>
+ <div class="fa-timeline-labels"><span>00:00</span><span id="practiceMapDuration">04:07</span></div>
+ <div id="practiceChapters" class="fa-chapters" role="group" aria-label="选择指板练习段落" aria-controls="songVideo fretboard lessonSteps"></div>
+</section>
 <div class="workspace">
 <aside class="song-panel">
  <div class="song-cover"><video id="songVideo" preload="metadata" playsinline controls poster="assets/poster.jpg" src="assets/currently-full.mp4" aria-label="Currently 完整演奏与指板跟随"></video><span class="cover-label">完整演奏 · 04:07</span></div>
@@ -44,5 +51,5 @@
 <dialog id="helpDialog"><button class="dialog-close" aria-label="关闭帮助">×</button><div class="eyebrow">第一步，不急着记和弦名</div><h2>三个数字，分开看。</h2><div class="help-items"><p><b>弦号</b> 第 1 弦最细、声音较高；第 6 弦最粗、声音较低。指板从上到下是 1 → 6 弦。</p><p><b>品位</b> 上方的 1、2、3…是从琴头开始数的格子。按在格子靠近右侧品丝的位置。</p><p><b>指号</b> 音符旁的小数字是左手手指：1 食指、2 中指、3 无名指、4 小指。</p><p><b>× 与 0</b> × 表示这根弦不发声；0 表示不按品、弹空弦。点击左侧 × 可以切换空弦。</p></div><p class="dialog-tip">先选择左边的 B♭7，点“逐弦听音”，再逐一看看下方的实际音名。</p><button class="primary dialog-close">开始试一试</button></dialog>
 <dialog id="evidenceDialog"><button class="dialog-close" aria-label="关闭依据">×</button><div class="eyebrow">本课的四层依据</div><h2>练习可以明确，证据也要明确。</h2><dl><dt>已确认的音轨</dt><dd>来源为 YouTube p9AJpi3jRWc，Keaton Simons 的 Currently 现场演奏。完整音轨可解码，时长约 247.38 秒。全曲分析与指板练习均使用完整视频；三个入门和弦可单独选择。</dd><dt>谱面信息</dt><dd>尚未取得作者原谱。全曲页列出第三方简化谱与网友谱，并说明它们不等于本次现场版本。</dd><dt>分析候选</dt><dd>和弦名称和边界来自频谱、音高分析与画面对照，尚未完成人工逐音校订。E♭大调中心是当前和声分析工作结论；速度、拍号与具体音符仍按证据标为候选。</dd><dt>教学改写</dt><dd>指板按标准调弦重新配音；手指标记是可行的教学建议，原演奏调弦、变调夹与逐指动作未确认。Solo 的简化音序与按位也是教学改写，不与原片逐音同步。合成试音只演示音高关系，不能模拟原录音音色。</dd></dl><p class="dialog-tip">自由指板按实际发声音识别，音数不足会显示单音或音组；有多种解释时保留候选。</p></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="lesson-data.js"></script><script src="music-core.js"></script><script src="full-analysis-data.js"></script><script src="practice-data.js"></script><script src="app.js"></script><script src="full-analysis.js?v=20261111-section-sync"></script><script src="integration.js"></script>
+<script src="lesson-data.js"></script><script src="music-core.js"></script><script src="full-analysis-data.js"></script><script src="practice-data.js"></script><script src="app.js?v=20261111-practice-sections"></script><script src="full-analysis.js?v=20261111-section-sync"></script><script src="integration.js"></script>
 </body></html>
