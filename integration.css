@@ -1,0 +1,78 @@
+#analysisView[hidden],#practiceView[hidden]{display:none!important}.harmonic-context{display:grid;grid-template-columns:150px 1fr;gap:16px;background:#eff3e8;border:1px solid #dce5d1;border-radius:10px;margin:0 0 18px;padding:15px 18px}.harmonic-context[hidden],.song-context[hidden]{display:none}.harmonic-context small{display:block;font-size:9px;color:#7b886f}.harmonic-context strong{display:block;font:28px Georgia;margin-top:6px;color:#35513b}.harmonic-context strong span{font-size:17px;margin-left:10px;color:#7d886f}.harmonic-context p{font-size:11px;line-height:1.9;color:#63725a;margin:0}.song-context{display:flex;flex-wrap:wrap;gap:8px 14px;border:1px solid #d9e3cd;background:#f2f5e9;padding:13px;border-radius:8px;font-size:10px;margin-bottom:15px}.song-context strong{font-size:12px;color:#435f37}.song-context span{color:#77836c;line-height:1.8}.song-context button{font-size:10px;color:#345d37;text-decoration:underline;text-underline-offset:3px}.nav-button{white-space:nowrap}@media(max-width:540px){.topbar nav{gap:8px}.nav-button{font-size:10px}.brand{font-size:18px}.brand small{font-size:5px}.brand-mark{height:28px;width:28px;font-size:27px}.quiet{padding:0}.harmonic-context{grid-template-columns:1fr;gap:8px}.harmonic-context strong{font-size:24px}.topbar{padding-inline:4%}}
+
+/* The full-song practice list stays navigable independently of the page. */
+#practiceView .song-panel{position:static}
+.practice-section-picker{display:grid;gap:8px;padding:17px 17px 0}
+.practice-section-picker label{font-size:11px;font-weight:600;color:#52664a}
+.practice-section-picker select{width:100%;min-width:0;max-width:100%;padding:9px 8px;font-size:11px;line-height:1.5}
+#practiceView .scope-switch{margin-top:12px}
+.practice-coverage,.practice-progress{font-size:10px;color:#77836c;line-height:1.7;margin:0;padding:0 19px 11px}
+.practice-progress{padding-top:10px;padding-bottom:12px;border-top:1px solid #edf0e8}
+.practice-progress:empty{display:none}
+#practiceView .lesson-steps{position:relative;display:block;max-height:420px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#bdcbb5 transparent;padding:0 10px 8px;scroll-padding:8px}
+#practiceView .step-item{min-width:0;width:100%;flex:none}
+#practiceView .step-item>span:nth-child(2){min-width:0;flex:1}
+#practiceView .step-item strong{overflow-wrap:anywhere;line-height:1.35}
+#practiceView .step-item small{line-height:1.6}
+#practiceView .step-num{flex:none;width:25px}
+#practiceView .step-check{flex:none}
+#practiceView .step-item.solo,#practiceView .step-item[data-kind="solo"]{background:#f8f2e8}
+#practiceView .step-item.solo .step-num,#practiceView .step-item[data-kind="solo"] .step-num{color:#a47745}
+#practiceView .step-item.unresolved,#practiceView .step-item.decay,#practiceView .step-item[data-kind="unresolved"],#practiceView .step-item[data-kind="decay"]{color:#7f8779}
+#practiceView .step-item.unresolved strong,#practiceView .step-item.decay strong,#practiceView .step-item[data-kind="unresolved"] strong,#practiceView .step-item[data-kind="decay"] strong{font-size:13px;font-weight:500}
+#practiceView .step-item.active{background:#e8efde;box-shadow:inset 3px 0 #244e3e}
+#practiceView .playback-tools select{max-width:145px}
+#practiceView .chord-heading>div:first-child{min-width:0}
+#practiceView .chord-title-row{flex-wrap:wrap}
+#practiceView .chord-title-row h2{overflow-wrap:anywhere}
+.practice-evidence{font-size:10px;line-height:1.8;color:#8a7653;border-left:2px solid #d7c79b;padding:0 0 0 11px;margin:0 0 16px}
+.practice-evidence:empty{display:none}
+.solo-practice{margin:0 0 18px;padding:20px;border:1px solid #e4d8c2;border-radius:12px;background:#f8f4eb}
+.solo-practice[hidden]{display:none!important}
+.solo-practice h3,.solo-practice h4{margin:0 0 10px;font-size:17px;font-weight:600;color:#6f5737;line-height:1.5}
+.solo-practice p{font-size:11px;line-height:1.85;color:#7f735f;margin:9px 0}
+.solo-practice>small{font-size:10px;line-height:1.8;color:#9a886c;display:block;margin-top:11px}
+.solo-phrase-tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}
+.solo-phrase-tabs button{border:1px solid #dfd3bd;border-radius:6px;padding:8px 10px;background:#fffdf8;color:#8a7654;font-size:10px;line-height:1.5}
+.solo-phrase-tabs button:hover,.solo-phrase-tabs button.selected{background:#e9dfc9;border-color:#c7b18b;color:#665035}
+.solo-note-buttons{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:15px 0}
+.solo-note-buttons button{display:flex;flex-direction:column;gap:4px;justify-content:center;align-items:center;min-width:65px;min-height:72px;flex:0 1 auto;background:#fffefa;border:1px solid #ded3bd;border-radius:8px;padding:9px 11px;color:#7d6847;font-size:11px;line-height:1.5}
+.solo-note-buttons button strong,.solo-note-buttons button b{font:600 21px Georgia,serif;color:#695235}
+.solo-note-buttons button small,.solo-note-buttons button span{font-size:9px;color:#99886c}
+.solo-note-buttons button:hover,.solo-note-buttons button.selected{background:#e7efdd;border-color:#83a276;box-shadow:0 0 0 1px #a3b894;color:#375330}
+.solo-note-buttons button.selected strong,.solo-note-buttons button.selected b{color:#375330}
+.solo-practice-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;align-items:center}
+.solo-practice-actions button{font-size:11px;border-radius:6px;padding:9px 12px;border:1px solid #cfc3aa;color:#6f5a3b;background:#fffdfa}
+.solo-practice-actions button:hover{background:#eee5d3}
+.solo-practice-actions .primary{background:#244e3e;border-color:#244e3e;color:white}
+.solo-practice-actions .primary:hover{background:#31634e}
+@media(max-width:850px){
+ #practiceView .song-panel{display:grid;grid-template-columns:230px minmax(0,1fr)}
+ #practiceView .song-cover{display:block;grid-column:1;grid-row:1 / span 2;align-self:start}
+ #practiceView .song-cover video{height:auto;aspect-ratio:16/9;object-fit:contain}
+ #practiceView .song-info,#practiceView .playback-tools{grid-column:2}
+ .practice-section-picker,#practiceView .scope-switch,.practice-coverage,#practiceView .lesson-steps,.practice-progress,#practiceView .song-footnote{grid-column:1/-1}
+ #practiceView .lesson-steps{max-height:300px;display:block}
+ #practiceView .step-item{display:flex;min-width:0;width:100%}
+}
+@media(max-width:540px){
+ #practiceView .song-panel{display:block}
+ #practiceView .song-cover{display:block}
+ #practiceView .song-cover video{height:auto;aspect-ratio:16/9;width:100%;object-fit:contain}
+ #practiceView .playback-tools{display:grid;gap:11px;font-size:11px}
+ #practiceView .playback-tools>label:has(select){display:flex;justify-content:space-between;align-items:center}
+ #practiceView .playback-tools .check-label{line-height:1.7}
+ #practiceView .playback-tools select{font-size:12px;min-height:33px}
+ .practice-section-picker select{font-size:12px;min-height:38px}
+ #practiceView .lesson-steps{max-height:270px}
+ #practiceView .step-item{padding:11px}
+ .practice-coverage,.practice-progress{font-size:10px}
+ .practice-evidence{font-size:10px;margin-bottom:14px}
+ .solo-practice{padding:15px;border-radius:10px}
+ .solo-practice h3,.solo-practice h4{font-size:16px}
+ .solo-phrase-tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+ .solo-phrase-tabs button{font-size:10px;padding:9px 7px}
+ .solo-note-buttons{gap:6px}
+ .solo-note-buttons button{min-width:60px;min-height:70px;padding:8px 10px}
+ .solo-practice-actions button{flex:1;text-align:center;min-height:38px}
+}
