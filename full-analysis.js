@@ -42,12 +42,28 @@
     window.dispatchEvent(new CustomEvent('full-song-play'));
   }
   function inform(message) { const out = $('[data-fa="message"]'); if (out) { out.textContent = message; out.hidden = !message; } }
+  function applyPendingSeek() {
+    if (!player || !pendingSeek || pendingSeek.applied || player.readyState < 1) return;
+    const request = pendingSeek;
+    try {
+      request.applied = true;
+      if (Math.abs(player.currentTime - request.time) > .001) player.currentTime = request.time;
+      if (request.play) {
+        request.play = false;
+        player.play().catch(() => inform('暂时无法播放。可以先阅读分析，或打开原视频对照。'));
+      }
+      if (!player.seeking && Math.abs(player.currentTime - request.time) < .05) pendingSeek = null;
+    } catch {
+      request.applied = false;
+      // Keep the latest selection until the media can accept its seek.
+    }
+  }
   function seek(time, play = false) {
     if (!player) return;
     const t = Math.max(0, Math.min(Number(time) || 0, duration() - .001));
-    try { player.currentTime = t; pendingSeek = null; } catch { pendingSeek = t; }
+    pendingSeek = {time:t, play, applied:false};
     updateTime(t);
-    if (play) player.play().catch(() => inform('暂时无法播放。可以先阅读分析，或打开原视频对照。'));
+    applyPendingSeek();
   }
   function selectSection(idOrIndex, options = {}) {
     const next = typeof idOrIndex === 'number' ? idOrIndex : sections().findIndex(s => s.id === idOrIndex);
@@ -70,9 +86,9 @@
   }
   function updateTime(forcedTime) {
     if (!player) return;
-    const time = Number.isFinite(forcedTime) ? forcedTime : player.currentTime;
+    const time = Number.isFinite(forcedTime) ? forcedTime : pendingSeek?.time ?? player.currentTime;
     const section = selectedSection();
-    if (loop && section && !player.paused && time >= Number(section.end) - .045) {
+    if (!pendingSeek && loop && section && !player.paused && time >= Number(section.end) - .045) {
       seek(section.start); return;
     }
     $('[data-fa="clock"]').textContent = clock(time, true);
@@ -113,8 +129,8 @@
     const source = $('[data-fa="source"]');
     source.hidden = !href; if (href) source.href = href;
     const timeline = $('[data-fa="timeline"]');
-    timeline.innerHTML = sections().map((s,index) => { const type = typeInfo(s.type);return `<button class="fa-timeline-part ${type[1]}" style="flex:${Math.max(.2,Number(s.end)-Number(s.start))}" data-fa-section="${index}" aria-label="${esc(s.title)}，${clock(s.start)}到${clock(s.end)}"><span>${index+1}</span></button>`; }).join('') + '<span class="fa-playhead" data-fa="playhead" aria-hidden="true"></span>';
-    $('[data-fa="chapters"]').innerHTML = sections().map((s,index) => { const type = typeInfo(s.type);return `<button class="fa-chapter ${type[1]}" data-fa-section="${index}"><span class="fa-chapter-no">${String(index+1).padStart(2,'0')}</span><span><strong>${esc(s.title || '未命名段落')}</strong><small>${clock(s.start)}–${clock(s.end)} · ${type[0]}</small></span></button>`; }).join('');
+    timeline.innerHTML = sections().map((s,index) => { const type = typeInfo(s.type);return `<button class="fa-timeline-part ${type[1]}" style="flex:${Math.max(.2,Number(s.end)-Number(s.start))}" type="button" aria-controls="fa-section-detail" data-fa-section="${index}" aria-label="${esc(s.title)}，${clock(s.start)}到${clock(s.end)}"><span>${index+1}</span></button>`; }).join('') + '<span class="fa-playhead" data-fa="playhead" aria-hidden="true"></span>';
+    $('[data-fa="chapters"]').innerHTML = sections().map((s,index) => { const type = typeInfo(s.type);return `<button class="fa-chapter ${type[1]}" type="button" aria-controls="fa-section-detail" data-fa-section="${index}"><span class="fa-chapter-no">${String(index+1).padStart(2,'0')}</span><span><strong>${esc(s.title || '未命名段落')}</strong><small>${clock(s.start)}–${clock(s.end)} · ${type[0]}</small></span></button>`; }).join('');
     $('[data-fa="duration"]').textContent = clock(meta.duration || 0);
     renderSectionSelection();
   }
@@ -157,8 +173,8 @@
     host.classList.add('fa-shell');
     host.innerHTML = `<div class="fa-heading"><div><div class="fa-kicker">先听见全貌，再走进每一小句</div><h2>一首歌的音乐地图<span>。</span></h2><p>调性 · 根音走向 · 和弦作用 · 伴唱与 Solo · 节奏</p></div><span class="fa-draft"><i></i> 全曲分析工作稿</span></div>
     <section class="fa-overview" aria-label="全曲音乐概览"><div class="fa-overview-intro"><div><h3 data-fa="title"></h3><p data-fa="artist"></p></div><a data-fa="source" target="_blank" rel="noopener">查看原视频 ↗</a></div><p class="fa-overview-summary" data-fa="summary"></p><div class="fa-stats" data-fa="stats"></div><div class="fa-overview-evidence"><details><summary>为什么这样判断调性？</summary><div data-fa="key-evidence"></div></details><details><summary>有没有离调或转调？</summary><div data-fa="modulation"></div></details></div></section>
-    <section class="fa-map" aria-label="完整演奏段落地图"><div class="fa-map-title"><h3>整首歌，现在走到哪里？</h3><div class="fa-map-legend"><span><i class="voice"></i>伴唱</span><span><i class="solo"></i>Solo / 器乐</span><span><i class="talk"></i>谈话 / 前奏</span><span><i class="outro"></i>收束</span></div></div><div class="fa-timeline" data-fa="timeline"></div><div class="fa-timeline-labels"><span>00:00</span><span data-fa="duration"></span></div><div class="fa-chapters" data-fa="chapters"></div></section>
-    <div class="fa-workspace"><aside class="fa-player-panel"><video id="fullSongVideo" data-fa="video" controls playsinline preload="metadata" aria-label="Currently 完整演奏视频"></video><div class="fa-player-content"><div class="fa-player-top"><span>原视频时间</span><strong data-fa="clock">00:00.00</strong></div><button class="primary fa-play-button" data-fa-action="play">▶ 播放完整演奏</button><div class="fa-player-settings"><label>播放速度<select data-fa="speed" aria-label="完整演奏播放速度"><option value="0.5">0.5 ×</option><option value="0.75">0.75 ×</option><option value="1" selected>1.0 ×</option></select></label><label><input type="checkbox" data-fa="loop"> 循环选中段落</label><label><input type="checkbox" data-fa="follow" checked> 播放时自动跟随段落</label></div><div class="fa-player-message" data-fa="message" role="status" hidden></div><div class="fa-now" data-fa="now"></div><p class="fa-player-note">根音是和弦命名的参照，不一定等于最低音。和弦作用要连着前后乐句一起判断。</p></div></aside><section class="fa-section-detail" data-fa="detail" aria-label="当前段落分析"></section></div>
+    <section class="fa-map" aria-label="完整演奏段落地图"><div class="fa-map-title"><h3>整首歌，现在走到哪里？</h3><div class="fa-map-legend"><span><i class="voice"></i>伴唱</span><span><i class="solo"></i>Solo / 器乐</span><span><i class="talk"></i>谈话 / 前奏</span><span><i class="outro"></i>收束</span></div></div><p class="fa-map-hint">点击色块或段落卡片，视频与下方和弦分析一起跳转。</p><div class="fa-timeline" data-fa="timeline"></div><div class="fa-timeline-labels"><span>00:00</span><span data-fa="duration"></span></div><div class="fa-chapters" data-fa="chapters"></div></section>
+    <div class="fa-workspace"><aside class="fa-player-panel"><video id="fullSongVideo" data-fa="video" controls playsinline preload="metadata" aria-label="Currently 完整演奏视频"></video><div class="fa-player-content"><div class="fa-player-top"><span>原视频时间</span><strong data-fa="clock">00:00.00</strong></div><button class="primary fa-play-button" data-fa-action="play">▶ 播放完整演奏</button><div class="fa-player-settings"><label>播放速度<select data-fa="speed" aria-label="完整演奏播放速度"><option value="0.5">0.5 ×</option><option value="0.75">0.75 ×</option><option value="1" selected>1.0 ×</option></select></label><label><input type="checkbox" data-fa="loop"> 循环选中段落</label><label><input type="checkbox" data-fa="follow" checked> 播放时自动跟随段落</label></div><div class="fa-player-message" data-fa="message" role="status" hidden></div><div class="fa-now" data-fa="now"></div><p class="fa-player-note">根音是和弦命名的参照，不一定等于最低音。和弦作用要连着前后乐句一起判断。</p></div></aside><section id="fa-section-detail" class="fa-section-detail" data-fa="detail" aria-label="当前段落分析"></section></div>
     <section class="fa-terms"><div><div class="fa-kicker">遇到术语，随时回来看看</div><h3>先把这些概念分清。</h3><p>同一个和弦，放在不同的前后关系里，可以承担不同的作用。</p></div><div data-fa="definitions"></div></section>
     <details class="fa-status"><summary><span>分析覆盖与仍需复核的内容</span><span>＋</span></summary><p data-fa="coverage"></p><div data-fa="limits"></div><div data-fa="sources" class="fa-sources"></div></details>`;
     player=$('[data-fa="video"]');
@@ -168,8 +184,14 @@
     host.addEventListener('click',handleClick);
     host.addEventListener('change',handleChange);
     player.addEventListener('timeupdate',()=>updateTime());
-    player.addEventListener('seeked',()=>updateTime());
-    player.addEventListener('loadedmetadata',()=>{if(pendingSeek!==null)seek(pendingSeek);updateTime();});
+    player.addEventListener('seeking',()=>{
+      // Native scrubbing takes over from a pending chapter jump.
+      if (pendingSeek?.applied && Math.abs(player.currentTime - pendingSeek.time) > .05) pendingSeek = null;
+      updateTime();
+    });
+    player.addEventListener('seeked',()=>{if(pendingSeek?.applied&&!player.seeking)pendingSeek=null;updateTime();});
+    player.addEventListener('loadedmetadata',()=>{applyPendingSeek();updateTime();});
+    player.addEventListener('canplay',()=>{applyPendingSeek();updateTime();});
     player.addEventListener('play',()=>{pauseOthers();$('[data-fa-action="play"]').textContent='Ⅱ 暂停演奏';inform('');});
     player.addEventListener('pause',()=>{$('[data-fa-action="play"]').textContent='▶ 播放完整演奏';});
     player.addEventListener('ended',()=>{if(loop&&selectedSection())seek(selectedSection().start,true);});
