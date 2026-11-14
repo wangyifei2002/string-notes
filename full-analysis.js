@@ -64,6 +64,7 @@
     const t = Math.max(0, Math.min(Number(time) || 0, duration() - .001));
     pendingSeek = {time:t, play, applied:false};
     updateTime(t);
+    keepPlayingChordVisible();
     applyPendingSeek();
   }
   function selectSection(idOrIndex, options = {}) {
@@ -85,6 +86,29 @@
       button.setAttribute('aria-pressed', String(active));
     });
   }
+  function keepPlayingChordVisible() {
+    if (!follow || !host || host.hidden || chordIndex < 0) return;
+    const flow = $('[data-fa="degree-flow"]');
+    const active = flow?.querySelector(`[data-fa-chord="${chordIndex}"]`);
+    if (!active || flow.clientWidth <= 0) return;
+    const box = flow.getBoundingClientRect(), card = active.getBoundingClientRect();
+    if (box.width <= 0 || card.width <= 0) return;
+    const left = box.left + flow.clientLeft, right = left + flow.clientWidth;
+    if (card.left >= left && card.right <= right) return;
+    // Move only this strip; document scrolling would pull the video out of view.
+    const centered = flow.scrollLeft + (card.left + card.right - left - right) / 2;
+    flow.scrollLeft = Math.max(0, Math.min(flow.scrollWidth - flow.clientWidth, centered));
+  }
+  function markPlayingChords() {
+    host.querySelectorAll('[data-fa-chord]').forEach(el => {
+      const playing = Number(el.dataset.faChord) === chordIndex;
+      el.classList.toggle('playing', playing);
+      if (el.classList.contains('fa-degree-step')) {
+        if (playing) el.setAttribute('aria-current', 'step');
+        else el.removeAttribute('aria-current');
+      }
+    });
+  }
   function updateTime(forcedTime) {
     if (!player) return;
     const time = Number.isFinite(forcedTime) ? forcedTime : pendingSeek?.time ?? player.currentTime;
@@ -100,8 +124,10 @@
       if (next >= 0 && next !== sectionIndex) selectSection(next,{seek:false});
     }
     const nextChord = findChord(time);
-    if (nextChord !== chordIndex) { chordIndex = nextChord; renderNowPlaying(); }
-    host.querySelectorAll('[data-fa-chord]').forEach(el => el.classList.toggle('playing', Number(el.dataset.faChord) === chordIndex));
+    const changed = nextChord !== chordIndex;
+    if (changed) { chordIndex = nextChord; renderNowPlaying(); }
+    markPlayingChords();
+    if (changed) keepPlayingChordVisible();
   }
   function renderNowPlaying() {
     const chord = chords()[chordIndex];
@@ -150,7 +176,8 @@
     ${isSolo ? `<section class="fa-solo"><div class="fa-card-icon">♪</div><div class="fa-kicker">把它作为旋律演奏来理解</div><h4>Solo：音怎样落在和声里</h4>${structured(s.soloAnalysis,'当前先定位器乐段与乐句边界；逐音、技巧与原版指法仍需复核，暂不补写完整独奏谱。')}${soloPhrasesMarkup(s)}</section>` : ''}
     <section class="fa-rhythm"><div class="fa-kicker">节奏也属于音乐的表达</div><h4>${isSolo?'Solo 的节奏与呼吸':'这一段的节奏与演奏模式'}</h4>${structured(s.rhythm,'先找反复出现的稳定脉搏，再观察旋律或和弦是否提前、延后进入。这里尚未确认精确拍速。')}</section>
     <div class="fa-section-nav"><button class="secondary" data-fa-action="previous" ${sectionIndex===0?'disabled':''}>← 上一段</button><span>${sectionIndex+1} / ${sections().length}</span><button class="primary" data-fa-action="next" ${sectionIndex===sections().length-1?'disabled':''}>下一段 →</button></div>`;
-    host.querySelectorAll('[data-fa-chord]').forEach(el=>el.classList.toggle('playing',Number(el.dataset.faChord)===chordIndex));
+    markPlayingChords();
+    keepPlayingChordVisible();
   }
   function flowMarkup(events) {
     if (!events.length) return '<div class="fa-empty">这一段暂无可靠的根音走向标注。请先阅读段落分析。</div>';
@@ -175,7 +202,7 @@
     host.innerHTML = `<div class="fa-heading"><div><div class="fa-kicker">先听见全貌，再走进每一小句</div><h2>一首歌的音乐地图<span>。</span></h2><p>调性 · 根音走向 · 和弦作用 · 伴唱与 Solo · 节奏</p></div><span class="fa-draft"><i></i> 全曲分析工作稿</span></div>
     <section class="fa-overview" aria-label="全曲音乐概览"><div class="fa-overview-intro"><div><h3 data-fa="title"></h3><p data-fa="artist"></p></div><a data-fa="source" target="_blank" rel="noopener">查看原视频 ↗</a></div><p class="fa-overview-summary" data-fa="summary"></p><div class="fa-stats" data-fa="stats"></div><div class="fa-overview-evidence"><details><summary>为什么这样判断调性？</summary><div data-fa="key-evidence"></div></details><details><summary>有没有离调或转调？</summary><div data-fa="modulation"></div></details></div></section>
     <section class="fa-map" aria-label="完整演奏段落地图"><div class="fa-map-title"><h3>整首歌，现在走到哪里？</h3><div class="fa-map-legend"><span><i class="voice"></i>伴唱</span><span><i class="solo"></i>Solo / 器乐</span><span><i class="talk"></i>谈话 / 前奏</span><span><i class="outro"></i>收束</span></div></div><p class="fa-map-hint">点击色块或段落卡片，视频与下方和弦分析一起跳转。</p><div class="fa-timeline" data-fa="timeline"></div><div class="fa-timeline-labels"><span>00:00</span><span data-fa="duration"></span></div><div class="fa-chapters" data-fa="chapters"></div></section>
-    <div class="fa-workspace"><aside class="fa-player-panel"><video id="fullSongVideo" data-fa="video" controls playsinline preload="metadata" aria-label="Currently 完整演奏视频"></video><div class="fa-player-content"><div class="fa-player-top"><span>原视频时间</span><strong data-fa="clock">00:00.00</strong></div><button class="primary fa-play-button" data-fa-action="play">▶ 播放完整演奏</button><div class="fa-player-settings"><label>播放速度<select data-fa="speed" aria-label="完整演奏播放速度"><option value="0.5">0.5 ×</option><option value="0.75">0.75 ×</option><option value="1" selected>1.0 ×</option></select></label><label><input type="checkbox" data-fa="loop"> 循环选中段落</label><label><input type="checkbox" data-fa="follow" checked> 播放时自动跟随段落</label></div><div class="fa-player-message" data-fa="message" role="status" hidden></div><div class="fa-now" data-fa="now"></div><p class="fa-player-note">根音是和弦命名的参照，不一定等于最低音。和弦作用要连着前后乐句一起判断。</p></div></aside><section id="fa-section-detail" class="fa-section-detail" data-fa="detail" aria-label="当前段落分析"></section></div>
+    <div class="fa-workspace"><aside class="fa-player-panel"><video id="fullSongVideo" data-fa="video" controls playsinline preload="metadata" aria-label="Currently 完整演奏视频"></video><div class="fa-player-content"><div class="fa-player-top"><span>原视频时间</span><strong data-fa="clock">00:00.00</strong></div><button class="primary fa-play-button" data-fa-action="play">▶ 播放完整演奏</button><div class="fa-player-settings"><label>播放速度<select data-fa="speed" aria-label="完整演奏播放速度"><option value="0.5">0.5 ×</option><option value="0.75">0.75 ×</option><option value="1" selected>1.0 ×</option></select></label><label><input type="checkbox" data-fa="loop"> 循环选中段落</label><label><input type="checkbox" data-fa="follow" checked> 播放时自动跟随段落与和弦</label></div><div class="fa-player-message" data-fa="message" role="status" hidden></div><div class="fa-now" data-fa="now"></div><p class="fa-player-note">根音是和弦命名的参照，不一定等于最低音。和弦作用要连着前后乐句一起判断。</p></div></aside><section id="fa-section-detail" class="fa-section-detail" data-fa="detail" aria-label="当前段落分析"></section></div>
     <section class="fa-terms"><div><div class="fa-kicker">遇到术语，随时回来看看</div><h3>先把这些概念分清。</h3><p>同一个和弦，放在不同的前后关系里，可以承担不同的作用。</p></div><div data-fa="definitions"></div></section>
     <details class="fa-status"><summary><span>分析覆盖与仍需复核的内容</span><span>＋</span></summary><p data-fa="coverage"></p><div data-fa="limits"></div><div data-fa="sources" class="fa-sources"></div></details>`;
     player=$('[data-fa="video"]');
@@ -202,7 +229,7 @@
     player.addEventListener('pause',()=>{$('[data-fa-action="play"]').textContent='▶ 播放完整演奏';});
     player.addEventListener('ended',()=>{if(loop&&selectedSection())seek(selectedSection().start,true);});
     player.addEventListener('error',()=>inform('完整视频暂未加载成功。可以先阅读各段分析，再通过原视频链接对照。'));
-    if(!boundVisibility){window.addEventListener('pagehide',pause);boundVisibility=true;}
+    if(!boundVisibility){window.addEventListener('pagehide',pause);window.addEventListener('resize',keepPlayingChordVisible);boundVisibility=true;}
     ready=true;return true;
   }
   function handleClick(event) {
@@ -223,11 +250,11 @@
   function handleChange(event){
     const type=event.target.dataset.fa;
     if(type==='speed')player.playbackRate=Number(event.target.value)||1;
-    if(type==='follow'){follow=event.target.checked;if(follow&&!loop)updateTime();}
+    if(type==='follow'){follow=event.target.checked;if(follow){updateTime();keepPlayingChordVisible();}}
     if(type==='loop'){loop=event.target.checked;if(loop&&selectedSection()&&(player.currentTime<selectedSection().start||player.currentTime>=selectedSection().end))seek(selectedSection().start);}
   }
   function pause(){player?.pause();}
-  function show(){if(!ready)init();if(host)host.hidden=false;}
+  function show(){if(!ready)init();if(host){host.hidden=false;updateTime();keepPlayingChordVisible();}}
   function refresh(newData){if(host){host.removeEventListener('click',handleClick);host.removeEventListener('change',handleChange);}ready=false;return init(newData);}
   window.FullSongAnalysis={init,show,pause,selectSection,refresh,getState:()=>({ready,sectionIndex,sectionId:selectedSection()?.id,chordIndex,notation,follow,loop,currentTime:player?.currentTime||0})};
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>init());else init();
