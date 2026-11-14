@@ -77,6 +77,13 @@
  .solo-practice-actions button{flex:1;text-align:center;min-height:38px}
 }
 
+/* Keep chord roles legible alongside note names and finger numbers. */
+.board-role-help{margin:0 15px 12px;color:#66765d;font-size:12px;line-height:1.8}
+.fretboard{min-width:833px}
+.fretboard .fret-head,.fretboard .fret-row{grid-template-columns:53px repeat(13,minmax(60px,1fr))}
+.fretboard .fret-row{height:78px}
+.fret-cell .note-role{position:absolute;z-index:3;top:calc(50% + 21px);left:50%;transform:translateX(-50%);white-space:nowrap;line-height:17px;font-size:11px;font-weight:400;color:#34483c;background:#f7f5e9e8;padding:0 2px;border-radius:2px;pointer-events:none}
+.fret-cell .note-role b{font-weight:700}
 /* Share the analysis chapter map styles without inheriting its page layout. */
 #practiceMap{--fa-voice:#6c9076;--fa-solo:#c78865;--fa-talk:#a9b09d;--fa-outro:#8395a1;min-width:0;max-width:100%;padding-top:0;margin-bottom:6px}
 #practiceMap .fa-map-title{flex-wrap:wrap}

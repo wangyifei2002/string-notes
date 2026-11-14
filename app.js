@@ -2,7 +2,7 @@
  'use strict';
  const $=id=>document.getElementById(id), data=window.LESSON, practice=window.PracticeData, events=practice.events, sections=practice.sections, core=window.GuitarCore, video=$('songVideo');
  const flat=['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'];
- const colors={root:'#c6754e',third:'#8b76b6',fifth:'#538ca1',seventh:'#4f927e',color:'#b58c3d'};
+ const colors={root:'#c6754e',third:'#8b76b6',fifth:'#538ca1',seventh:'#4f927e',color:'#b58c3d',unknown:'#7e8789'};
  const titles={'7':'属七和弦','m7':'小七和弦','m7b5':'半减七和弦','dim7':'减七和弦','7#5':'升五音属七和弦','9':'属九和弦','9(no5)':'省略五音的属九和弦','major':'大三和弦','minor':'小三和弦','maj7':'大七和弦','sus2':'挂二和弦','sus4':'挂四和弦','5':'五度和弦'};
  let selected=0, frets=[...events[0].frets], scope='all', sectionFilter=-1, custom=false,labelMode='note',showAll=false,melodyNote=null,activePhrase=0,pendingSeek=null,loopAnchor=null;
  let practiced=new Set(), audioCtx=null, liveOsc=[], toastTimer=0, scheduledVisual=[], mapSectionIndex=-1;
@@ -14,7 +14,14 @@
  const playbackTime=()=>pendingSeek?.time??video.currentTime;
  const shortClock=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
  const visibleIndices=()=>events.map((_,i)=>i).filter(i=>scope==='tail'?[41.6,43.1,44.2].some(t=>Math.abs(events[i].start-t)<.02):scope==='section'?events[i].start<sections[sectionFilter].end&&events[i].end>sections[sectionFilter].start:true);
- function roleOf(degree){if(degree==='1')return'root';if(['3','♭3'].includes(degree))return'third';if(['5','♭5','♯5'].includes(degree))return'fifth';if(degree.includes('7'))return'seventh';return'color';}
+ function roleOf(degree){const step=Number(String(degree).match(/\d+$/)?.[0]);return({1:'root',3:'third',5:'fifth',7:'seventh'})[step]||(step?'color':'unknown');}
+ function chordRole(note){
+  if(melodyNote&&!custom)return{degree:'',name:'旋律音'};
+  const degree=String(note?.degree||''),match=degree.match(/^[♭♯♮]*(\d+)$/);
+  if(!match)return{degree:'',name:'关系待定'};
+  const names={1:'根音',2:'二音',3:'三音',4:'四音',5:'五音',6:'六音',7:'七音',8:'八音',9:'九音',11:'十一音',13:'十三音'};
+  return{degree,name:names[Number(match[1])]||'和弦音'};
+ }
  function intervalInfo(delta,quality){let deg={0:'1',1:'♭9',2:'9',3:'♭3',4:'3',5:'4',6:'♭5',7:'5',8:'♯5',9:'6',10:'♭7',11:'7'}[delta];if(quality==='dim7'&&delta===9)deg='♭♭7';if(quality==='sus2'&&delta===2)deg='2';const role=roleOf(deg);return{degree:deg,role:({'root':'根音','third':'三音','fifth':'五音','seventh':'七音','color':'色彩音'})[role],color:colors[role]};}
  function spellTone(rootPc,degree,midi){const letters=['C','D','E','F','G','A','B'],naturals=[0,2,4,5,7,9,11],step=Number(degree.match(/\d+/)?.[0]||1),idx=(letters.indexOf(flat[rootPc][0])+step-1)%7,pc=midi%12,delta=((pc-naturals[idx]+18)%12)-6;const name=letters[idx]+(delta>0?'♯'.repeat(delta):'♭'.repeat(-delta));return{name,octave:(midi-naturals[idx]-delta)/12-1};}
  function getView(){
@@ -77,8 +84,9 @@
   for(let i=5;i>=0;i--){const string=6-i, note=view.notes.find(n=>n.string===string);html+=`<div class="fret-row" style="--string-width:${1+(5-i)*.32}px"><div class="string-label"><b>${string}</b><span>${['E','A','D','G','B','E'][i]}</span><button class="mute-button ${frets[i]<0?'active':''}" data-mute="${i}" aria-label="${string}弦${frets[i]<0?'开启空弦':'静音'}">${frets[i]<0?'×':'○'}</button></div>`;
    for(let f=0;f<=12;f++){const n=core.noteAt(i,f),active=frets[i]===f, role=note?roleOf(note.degree):'root', finger=custom?'':(melodyNote?(melodyNote.string===string?melodyNote.finger:''):(current().fingerNumbers?.[i]??''));let text=note?.name??n.flatName;
     if(labelMode==='degree')text=note?.degree??'·';if(labelMode==='finger')text=custom?'·':finger||'0';
-    let content=active?`<span class="note-dot" data-finger="${labelMode==='finger'?'':finger}" style="--role-color:${colors[role]}">${esc(text)}</span>`:showAll?`<span class="ghost-note">${esc(n.flatName)}</span>`:([3,5,7,9,12].includes(f)&&i===3?'<span class="position-dot"></span>':'');
-    html+=`<button class="fret-cell ${f===0?'open':''} ${active?'is-active':''}" data-string="${i}" data-fret="${f}" aria-pressed="${active}" aria-label="${string}弦${f===0?'空弦':f+'品'}，${active&&note?note.label:n.flatName+n.octave}${active?'，已选择':''}">${content}</button>`;
+    const identity=chordRole(note),identityText=[identity.degree,identity.name].filter(Boolean).join(' ');
+    let content=active?`<span class="note-dot" data-finger="${labelMode==='finger'?'':finger}" style="--role-color:${colors[role]}">${esc(text)}</span><span class="note-role" data-degree="${esc(identity.degree)}">${identity.degree&&labelMode!=='degree'?`<b>${esc(identity.degree)}</b> `:''}${esc(identity.name)}</span>`:showAll?`<span class="ghost-note">${esc(n.flatName)}</span>`:([3,5,7,9,12].includes(f)&&i===3?'<span class="position-dot"></span>':'');
+    html+=`<button class="fret-cell ${f===0?'open':''} ${active?'is-active':''}" data-string="${i}" data-fret="${f}" aria-pressed="${active}" aria-label="${string}弦${f===0?'空弦':f+'品'}，${active&&note?note.label:n.flatName+n.octave}${active?'，'+esc(identityText)+(finger?'，左手'+finger+'指':'')+'，已选择':''}">${content}</button>`;
    }html+='</div>';
   }const scroller=document.querySelector('.board-scroll'),previousScroll=scroller.scrollLeft;$('fretboard').innerHTML=html;
   if(custom){scroller.scrollLeft=previousScroll;}else if(scroller.scrollWidth>scroller.clientWidth){const active=[...$('fretboard').querySelectorAll('.is-active')];if(active.length){const left=Math.min(...active.map(el=>el.offsetLeft)),right=Math.max(...active.map(el=>el.offsetLeft+el.offsetWidth));scroller.scrollLeft=Math.max(0,(left+right)/2-scroller.clientWidth/2);}}

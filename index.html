@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="从 Currently 的完整演奏学习调性、根音级数、和弦作用、节奏与吉他独奏，再回到六弦指板练习。"><title>弦上 · Currently 全曲分析与吉他练习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261111-practice-sections"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="从 Currently 的完整演奏学习调性、根音级数、和弦作用、节奏与吉他独奏，再回到六弦指板练习。"><title>弦上 · Currently 全曲分析与吉他练习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-chord-roles"></head>
 <body>
 <header class="topbar"><a class="brand" href="#"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="工作模式"><button id="analysisMode" class="nav-button active">全曲分析</button><button id="lessonMode" class="nav-button">指板练习</button><button id="freeMode" class="nav-button">自由指板</button></nav><button class="quiet" id="helpButton">怎样看指板 <span>?</span></button></header>
 <main>
@@ -36,6 +36,7 @@
  <p id="practiceEvidence" class="practice-evidence" aria-label="当前按法与音轨证据"></p>
  <div class="board-card"><div class="board-toolbar"><div><strong>六弦指板</strong><span>标准调弦 · 无变调夹</span></div><div class="label-switch" aria-label="指板标签"><button class="selected" data-label="note">音名</button><button data-label="degree">音程</button><button data-label="finger">指号</button></div></div>
  <div class="board-instruction"><span>上方是最细的 1 弦 · 下方是最粗的 6 弦</span><label><input type="checkbox" id="showAllNotes"> 显示全部音名</label></div>
+ <p class="board-role-help">圆点下方标注当前和弦内的音级；右上角小数字是左手指号。♭ 降、♯ 升、♭♭ 重降。</p>
  <div class="board-scroll" tabindex="0" aria-label="可横向滚动的吉他指板"><div id="fretboard" class="fretboard"></div></div>
  <div class="board-bottom"><div class="role-legend"><span><i class="root"></i>根音</span><span><i class="third"></i>三音</span><span><i class="fifth"></i>五音</span><span><i class="seventh"></i>七音</span><span><i class="color"></i>色彩音</span></div><span>点按位可试音 · 再点可取消</span></div></div>
  <div class="string-inspector"><div class="section-label">实际发声 <span>按六弦 → 一弦排列</span></div><div id="stringNotes" class="string-notes"></div></div>
@@ -51,5 +52,5 @@
 <dialog id="helpDialog"><button class="dialog-close" aria-label="关闭帮助">×</button><div class="eyebrow">第一步，不急着记和弦名</div><h2>三个数字，分开看。</h2><div class="help-items"><p><b>弦号</b> 第 1 弦最细、声音较高；第 6 弦最粗、声音较低。指板从上到下是 1 → 6 弦。</p><p><b>品位</b> 上方的 1、2、3…是从琴头开始数的格子。按在格子靠近右侧品丝的位置。</p><p><b>指号</b> 音符旁的小数字是左手手指：1 食指、2 中指、3 无名指、4 小指。</p><p><b>× 与 0</b> × 表示这根弦不发声；0 表示不按品、弹空弦。点击左侧 × 可以切换空弦。</p></div><p class="dialog-tip">先选择左边的 B♭7，点“逐弦听音”，再逐一看看下方的实际音名。</p><button class="primary dialog-close">开始试一试</button></dialog>
 <dialog id="evidenceDialog"><button class="dialog-close" aria-label="关闭依据">×</button><div class="eyebrow">本课的四层依据</div><h2>练习可以明确，证据也要明确。</h2><dl><dt>已确认的音轨</dt><dd>来源为 YouTube p9AJpi3jRWc，Keaton Simons 的 Currently 现场演奏。完整音轨可解码，时长约 247.38 秒。全曲分析与指板练习均使用完整视频；三个入门和弦可单独选择。</dd><dt>谱面信息</dt><dd>尚未取得作者原谱。全曲页列出第三方简化谱与网友谱，并说明它们不等于本次现场版本。</dd><dt>分析候选</dt><dd>和弦名称和边界来自频谱、音高分析与画面对照，尚未完成人工逐音校订。E♭大调中心是当前和声分析工作结论；速度、拍号与具体音符仍按证据标为候选。</dd><dt>教学改写</dt><dd>指板按标准调弦重新配音；手指标记是可行的教学建议，原演奏调弦、变调夹与逐指动作未确认。Solo 的简化音序与按位也是教学改写，不与原片逐音同步。合成试音只演示音高关系，不能模拟原录音音色。</dd></dl><p class="dialog-tip">自由指板按实际发声音识别，音数不足会显示单音或音组；有多种解释时保留候选。</p></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="lesson-data.js"></script><script src="music-core.js"></script><script src="full-analysis-data.js"></script><script src="practice-data.js"></script><script src="app.js?v=20261111-practice-sections"></script><script src="full-analysis.js?v=20261111-section-sync"></script><script src="integration.js"></script>
+<script src="lesson-data.js"></script><script src="music-core.js"></script><script src="full-analysis-data.js"></script><script src="practice-data.js"></script><script src="app.js?v=20261114-chord-roles"></script><script src="full-analysis.js?v=20261111-section-sync"></script><script src="integration.js"></script>
 </body></html>
