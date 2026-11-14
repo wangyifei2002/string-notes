@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const version = '20261114-shapes';
+  const version = '20261114-compact';
   const songs = window.SONGS || [];
   const selectedId = new URLSearchParams(location.search).get('song') || 'currently';
   const song = songs.find(item => item.id === selectedId);

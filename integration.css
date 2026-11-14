@@ -140,3 +140,128 @@
  #practiceMap .fa-chapter strong{font-size:11px}
  #practiceMap .fa-chapter small{font-size:9px}
 }
+
+/* Keep the video, chord route and playable board together during practice. */
+#practiceView .workspace{scroll-margin-top:12px}
+#practiceView .song-panel{position:sticky;top:12px;align-self:start}
+#practiceView .song-info{padding:12px 15px 10px}
+#practiceView .song-info h2{font-size:24px;margin:3px 0}
+#practiceView .song-info p{margin:0 0 5px;font-size:10px}
+#practiceView .song-info .eyebrow{font-size:9px;letter-spacing:.6px}
+#practiceView .cover-label{padding:5px 15px;font-size:9px}
+.practice-player-settings{border-block:1px solid var(--line);background:#f8faf6}
+.practice-player-settings>summary{cursor:pointer;list-style-position:inside;padding:11px 15px;font-size:11px;color:var(--green)}
+#practiceView .practice-player-settings .playback-tools{border:0;padding:0 15px 12px;gap:9px}
+#practiceView .practice-section-picker{padding:12px 15px 0;gap:6px}
+#practiceView .practice-section-picker select{padding:7px 8px}
+#practiceView .song-panel .practice-coverage{padding:10px 15px 8px;font-size:9px}
+#practiceView .song-panel .practice-progress{padding:8px 15px;font-size:9px}
+#practiceView .song-footnote{padding:12px 15px}
+.practice-progression{min-width:0;margin:0 0 8px}
+.progression-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 5px}
+.progression-heading h3{font-size:12px;font-weight:600;margin:0;line-height:1.7}
+.progression-heading h3 span{font-size:9px;font-weight:400;color:var(--muted);margin-left:8px}
+#practiceView .progression-heading .scope-switch{margin:0;padding:3px;gap:3px}
+#practiceView .progression-heading .scope-switch button{padding:5px 9px;font-size:10px;white-space:nowrap}
+#practiceView .practice-progression .lesson-steps{display:flex;align-items:stretch;gap:6px;position:relative;max-height:none;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;padding:3px 3px 7px;scroll-padding-inline:4px;min-width:0;scrollbar-width:thin}
+#practiceView .practice-progression .step-item{flex:0 0 122px;min-width:122px;width:122px;min-height:59px;margin:0;padding:8px;gap:6px;border:1px solid var(--line);background:#fff}
+#practiceView .practice-progression .step-item.active{background:#e8efde;border-color:#acbea0;box-shadow:inset 3px 0 #244e3e}
+#practiceView .practice-progression .step-item.solo{background:#f8f2e8}
+#practiceView .practice-progression .step-num{width:auto;min-width:16px;font-size:10px}
+#practiceView .practice-progression .step-item strong{font-size:15px;line-height:1.3}
+#practiceView .practice-progression .step-item.unresolved strong{font-size:11px}
+#practiceView .practice-progression .step-item small{font-size:9px;line-height:1.4;white-space:nowrap}
+#practiceView .practice-progression .step-check{font-size:10px;margin-left:auto}
+#practiceView .chord-heading{min-height:58px;margin-bottom:8px;gap:12px}
+#practiceView .chord-title-row h2{font-size:36px;line-height:1.15;margin:2px 0;letter-spacing:-1px}
+#practiceView .chord-heading .eyebrow{font-size:9px;letter-spacing:.7px}
+#practiceView .chord-heading p{font-size:10px;line-height:1.5;margin:2px 0 0}
+#practiceView .chord-controls{flex-direction:row;align-items:center;gap:6px;flex-shrink:0}
+#practiceView .chord-controls button{font-size:11px;padding:8px 10px}
+#practiceView .tone-strip{gap:7px;margin-bottom:9px}
+#practiceView .tone-chip{padding:4px 8px;gap:6px}
+#practiceView .tone-chip b{font-size:15px}
+#practiceView .tone-chip span{font-size:9px}
+#practiceView .board-toolbar{padding:7px 12px}
+#practiceView .board-toolbar strong{font-size:12px}
+#practiceView .label-switch{padding:2px}
+#practiceView .label-switch button{padding:4px 8px}
+#practiceView .board-instruction{padding:0 12px 6px;font-size:9px;line-height:1.5}
+#practiceView .board-scroll{padding:0 12px 3px}
+#practiceView .fretboard .fret-head{height:24px}
+#practiceView .fretboard .fret-row{height:68px}
+#practiceView .fret-cell .note-dot,#practiceView .held-dot{width:30px;height:30px;font-size:12px;transform:translateY(-4px)}
+#practiceView .fret-cell .note-role,#practiceView .held-role{top:calc(50% + 12px);font-size:10px;line-height:12px}
+#practiceView .held-role small{font-size:9px;line-height:10px}
+#practiceView .board-bottom{padding:8px 12px;font-size:9px;line-height:1.5;gap:7px}
+#practiceView .role-legend{flex-wrap:wrap;gap:6px 10px}
+.board-reading-help{border-top:1px solid var(--line);padding:0 12px;color:var(--muted)}
+.board-reading-help>summary{cursor:pointer;padding:7px 0;font-size:10px;line-height:1.5}
+#practiceView .board-reading-help .board-role-help{font-size:11px;line-height:1.7;margin:3px 0 9px}
+#practiceView .board-reading-help .board-selection-help{font-size:10px;line-height:1.7;margin:0 0 10px;padding:8px 10px}
+#practiceView .board-card+ .song-context{margin-top:14px}
+#practiceView .board-card+ .song-context[hidden]{display:none}
+@media(max-width:1120px){
+ #practiceView .chord-controls{flex-direction:column;align-items:stretch;gap:4px}
+ #practiceView .chord-controls button{padding:6px 9px;font-size:10px}
+}
+@media(max-width:850px){
+ #practiceView .song-panel{position:static;display:grid;grid-template-columns:minmax(210px,1fr) minmax(0,1fr);align-items:start}
+ #practiceView .song-cover{grid-column:1;grid-row:1 / span 5;align-self:start}
+ #practiceView .song-info,#practiceView .practice-player-settings,#practiceView .practice-section-picker,#practiceView .song-panel .practice-coverage,#practiceView .song-panel .practice-progress,#practiceView .song-footnote{grid-column:2}
+ #practiceView .practice-player-settings .playback-tools{display:grid;grid-column:auto}
+ #practiceView .song-cover video{height:auto;aspect-ratio:16/9;object-fit:contain}
+ #practiceView .learning-panel{margin-top:0}
+ #practiceView .chord-controls{flex-direction:row;align-items:center}
+ #practiceView .workspace{gap:14px}
+}
+@media(max-width:540px){
+ #practiceView .song-panel{display:block;position:static}
+ #practiceView .song-info{padding:10px 12px 7px}
+ #practiceView .song-info h2{font-size:23px}
+ #practiceView .song-info .eyebrow{display:none}
+ #practiceView .practice-section-picker{padding:9px 12px 0}
+ #practiceView .practice-section-picker label{font-size:10px}
+ #practiceView .practice-section-picker select{font-size:11px;min-height:34px;padding:5px 7px}
+ #practiceView .song-panel .practice-coverage,#practiceView .song-panel .practice-progress{padding:7px 12px;font-size:9px}
+ #practiceView .song-footnote{padding:9px 12px}
+ .practice-player-settings>summary{padding:9px 12px}
+ #practiceView .practice-player-settings .playback-tools{padding:0 12px 10px;display:grid;gap:8px}
+ .progression-heading h3{font-size:12px}
+ .progression-heading h3 span{display:block;margin-left:0;font-size:9px}
+ #practiceView .progression-heading .scope-switch button{font-size:10px;padding:5px 7px}
+ #practiceView .practice-progression .step-item{flex-basis:116px;min-width:116px;width:116px}
+ #practiceView .chord-title-row h2{font-size:31px}
+ #practiceView .chord-title-row{gap:7px}
+ #practiceView .chord-heading{gap:8px;min-height:57px}
+ #practiceView .chord-heading .eyebrow{font-size:8px;letter-spacing:.2px}
+ #practiceView .chord-controls{flex-direction:column;gap:4px}
+ #practiceView .chord-controls button{padding:6px 8px;font-size:10px}
+ #practiceView .tone-strip .strip-label{width:auto;font-size:9px}
+ #practiceView .tone-strip{gap:6px}
+ #practiceView .tone-chip{padding:4px 6px;gap:4px}
+ #practiceView .tone-chips{gap:5px}
+ #practiceView .board-toolbar{padding:7px 9px}
+ #practiceView .board-instruction{padding-inline:9px;font-size:8px}
+ #practiceView .board-instruction>span{max-width:none}
+ #practiceView .board-scroll{padding-inline:8px}
+ #practiceView .board-bottom{padding:8px 9px;font-size:8px}
+ #practiceView .board-bottom>span{display:inline}
+ #practiceView .role-legend{gap:5px 9px}
+ .board-reading-help{padding-inline:9px}
+}
+#practiceWorkspace{scroll-margin-top:12px}.focus-practice-link{color:#345d43;text-underline-offset:4px;white-space:nowrap;margin-left:8px}
+/* Bound the focus area on laptop-height screens without shrinking note labels. */
+#practiceView .progression-heading .scope-switch button{padding:3px 8px;line-height:1.3}
+#practiceView .practice-progression .step-item{height:60px;min-height:60px;padding:6px 8px}
+#practiceView .practice-progression .step-item strong{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#practiceView .practice-progression .step-item small{font-size:8px;line-height:12px}
+#practiceView .practice-progression .step-check{display:none}
+#practiceView .chord-heading .eyebrow{line-height:12px}
+#practiceView .chord-title-row h2{font-size:32px;line-height:36px;margin:1px 0}
+#practiceView .chord-heading p{line-height:13px;margin:1px 0}
+#practiceView .chord-controls button{line-height:15px;padding:6px 10px}
+#practiceView .tone-chip{line-height:18px;padding-block:3px}
+#practiceView .board-toolbar{padding-block:5px}
+#practiceView .label-switch button{line-height:14px;padding-block:3px}
+#practiceView .board-bottom{padding-block:5px;line-height:13px}
