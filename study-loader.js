@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const version = '20261114-follow';
+  const version = '20261114-sidebar';
   const songs = window.SONGS || [];
   const selectedId = new URLSearchParams(location.search).get('song') || 'currently';
   const song = songs.find(item => item.id === selectedId);
@@ -77,7 +77,6 @@
     $('#practiceCoverage').textContent = `00:00–${clock(duration)} · 全曲分段练习`;
     $('#chordName').textContent = song.title;
     $('#tailScope').textContent = ui.introLabel || '入门和弦';
-    $('.song-footnote p').textContent = evidence.teaching || '按法及指号以页面注明的依据为准；请结合当前演奏与对应谱面学习。';
     if(analysis.meta.performanceNote) {
       const note=document.createElement('p'); note.className='performance-window-note';
       note.textContent=analysis.meta.performanceNote;

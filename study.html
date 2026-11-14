@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="选择喜欢的吉他演奏，结合音乐分析和指板练习学习。"><title>弦上 · 歌曲学习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-compact"><link rel="stylesheet" href="library.css?v=20261114-shapes"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="选择喜欢的吉他演奏，结合音乐分析和指板练习学习。"><title>弦上 · 歌曲学习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-sidebar"><link rel="stylesheet" href="library.css?v=20261114-shapes"></head>
 <body class="study-page" data-study-state="loading">
 <header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="工作模式"><button id="analysisMode" class="nav-button active">全曲分析</button><button id="lessonMode" class="nav-button">指板练习</button><button id="freeMode" class="nav-button">自由指板</button></nav><button class="quiet" id="helpButton">怎样看指板 <span>?</span></button></header>
 <div class="study-selection"><a class="back-to-library" href="index.html">← 返回曲库</a><a class="back-to-library" href="chords.html">常用和弦手形库 ↗</a><label class="study-song-picker" for="songSelect"><span>正在学习</span><select id="songSelect" aria-label="选择要练习的歌曲"></select></label></div>
@@ -27,7 +27,10 @@
  <div class="practice-section-picker"><label for="practiceSection">选择练习段落</label><select id="practiceSection" aria-label="选择全曲练习段落"><option value="all">全曲 · 所有段落</option></select></div>
  <p id="practiceCoverage" class="practice-coverage">全曲和弦与旋律分段练习</p>
  <p id="practiceProgress" class="practice-progress" aria-label="练习进度"></p>
- <div class="song-footnote"><span class="status-tag">教学按法</span><p>全曲候选和弦按标准调弦配音；不确定处保留待核对，Solo 练习与原片逐音谱分开展示。</p></div>
+ <div class="sidebar-insights" aria-label="当前和弦分析与构成">
+ <div id="harmonicContext" class="harmonic-context"></div>
+<div class="hand-theory"><article class="explain-card theory"><div class="card-kicker"><span>02</span> 为什么是这个和弦</div><h3 id="whyTitle">和弦的组成音</h3><p id="whyText"></p><div class="movement" id="movementText"></div></article></div>
+ </div>
 </aside>
 <section class="learning-panel" aria-label="指板学习区">
 <section class="practice-progression" aria-label="当前练习和弦走向"><div class="progression-heading"><h3>和弦走向 <span>数字表示根音级数</span></h3><div class="scope-switch" role="group" aria-label="学习范围"><button id="allScope" class="selected">全曲和弦</button><button id="tailScope">入门3和弦</button></div></div><div id="lessonSteps" class="lesson-steps" aria-label="全曲和弦与旋律步骤"></div></section>
@@ -42,7 +45,6 @@
  <p id="boardSelectionHelp" class="board-selection-help"></p>
 </details></div>
  <div id="songContext" class="song-context" hidden></div>
- <div id="harmonicContext" class="harmonic-context"></div>
  <p id="practiceEvidence" class="practice-evidence" aria-label="当前按法与音轨证据"></p>
  <section id="shapeChoice" class="shape-choice" aria-label="按法来源与常用手形" hidden>
   <div class="shape-choice-top"><label for="shapeMode">按法与练习方式 <select id="shapeMode"><option value="song">本曲按法与选弦</option></select></label><a id="openShapeLibrary" href="chords.html">打开常用和弦手形库 →</a></div>
@@ -55,7 +57,6 @@
  </section>
  <section id="soloPractice" class="solo-practice" aria-label="Solo 旋律指板练习" hidden></section>
  <div class="string-inspector"><div class="section-label">本次拨响的音 <span>按六弦 → 一弦排列</span></div><div id="stringNotes" class="string-notes"></div></div>
-<div class="hand-theory"><article class="explain-card theory"><div class="card-kicker"><span>02</span> 为什么是这个和弦</div><h3 id="whyTitle">和弦的组成音</h3><p id="whyText"></p><div class="movement" id="movementText"></div></article></div>
  <div class="step-footer"><button class="secondary" id="prevChord">← 上一步</button><label class="check-label practice-check"><input type="checkbox" id="practiced"> 这一步我练过了</label><button class="primary" id="nextChord">下一步 →</button></div>
  <section class="mini-practice" hidden><div><h3>简化练习</h3><p></p><button id="playMelody" class="text-button">♪ 听这组音</button></div><div class="melody-path"></div></section>
  <details class="practice-audio" hidden><summary>简化练习与创作变化</summary><div></div></details>
@@ -67,5 +68,5 @@
 <dialog id="helpDialog"><button class="dialog-close" aria-label="关闭帮助">×</button><div class="eyebrow">第一步，不急着记和弦名</div><h2>三个数字，分开看。</h2><div class="help-items"><p><b>弦号</b> 第 1 弦最细、声音较高；第 6 弦最粗、声音较低。指板从上到下是 1 → 6 弦。</p><p><b>品位</b> 上方的 1、2、3…是从琴头开始数的格子。按在格子靠近右侧品丝的位置。</p><p><b>指号</b> 音符旁的小数字是左手手指：1 食指、2 中指、3 无名指、4 小指。</p><p><b>按法与拨弦</b> 实心音点表示本次拨响；虚线音点表示保留的按位或空弦，本次不拨。左侧 × 表示不拨，0 表示拨空弦，● 表示拨按住的弦。点击按位会进入自由选音。</p></div><p class="dialog-tip">先选择一处和弦，点“逐弦听音”，再逐一看看指板上的音名、和弦音级与左手指号。</p><button class="primary dialog-close">开始试一试</button></dialog>
 <dialog id="evidenceDialog"><button class="dialog-close" aria-label="关闭依据">×</button><div class="eyebrow">本课的四层依据</div><h2>练习可以明确，证据也要明确。</h2><dl></dl><p class="dialog-tip">自由指板按实际发声音识别，音数不足会显示单音或音组；有多种解释时保留候选。</p></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="songs.js?v=20261114-song-library"></script><script src="study-loader.js?v=20261114-follow"></script>
+<script src="songs.js?v=20261114-song-library"></script><script src="study-loader.js?v=20261114-sidebar"></script>
 </body></html>
