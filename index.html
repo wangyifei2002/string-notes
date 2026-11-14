@@ -1,56 +1,19 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="从 Currently 的完整演奏学习调性、根音级数、和弦作用、节奏与吉他独奏，再回到六弦指板练习。"><title>弦上 · Currently 全曲分析与吉他练习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-chord-roles"></head>
-<body>
-<header class="topbar"><a class="brand" href="#"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="工作模式"><button id="analysisMode" class="nav-button active">全曲分析</button><button id="lessonMode" class="nav-button">指板练习</button><button id="freeMode" class="nav-button">自由指板</button></nav><button class="quiet" id="helpButton">怎样看指板 <span>?</span></button></header>
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35">
+<meta name="description" content="弦上 String Notes：选择喜欢的吉他视频，学习全曲音乐分析、和弦走向、节奏与六弦指板，把听到的音乐变成手上的练习。">
+<title>弦上 · 选一首歌，开始练习</title>
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="library.css?v=20261114-song-library">
+</head>
+<body class="library-page">
+<header class="topbar"><a class="brand" href="index.html" aria-label="弦上曲库首页"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><span class="library-header-note">给喜欢音乐、也喜欢吉他的你</span></header>
 <main>
-<section id="analysisView" aria-label="完整演奏分析"></section>
-<section id="practiceView" hidden>
-<div class="page-heading"><div><div class="eyebrow">从第一句到最后一个落点。</div><h1>跟着整首歌，练指板<span class="title-dot">。</span></h1><p>选一个段落，沿着根音走向练按法；唱歌时看和弦，Solo 时看旋律。</p></div><div class="version"><span class="green-dot"></span> Currently · 全曲练习</div></div>
-<section id="practiceMap" class="fa-map practice-map" aria-label="全曲指板练习段落地图">
- <div class="fa-map-title"><h3>整首歌，现在走到哪里？</h3><div class="fa-map-legend" aria-label="段落类型"><span><i class="voice" aria-hidden="true"></i>伴唱</span><span><i class="solo" aria-hidden="true"></i>Solo / 器乐</span><span><i class="talk" aria-hidden="true"></i>谈话 / 前奏</span><span><i class="outro" aria-hidden="true"></i>收束</span></div></div>
- <p class="fa-map-hint">点击色块或段落卡片，视频、当前按法和练习列表一起切换。</p>
- <div id="practiceTimeline" class="fa-timeline" role="group" aria-label="按时间选择练习段落" aria-controls="songVideo fretboard lessonSteps"><span id="practicePlayhead" class="fa-playhead" aria-hidden="true"></span></div>
- <div class="fa-timeline-labels"><span>00:00</span><span id="practiceMapDuration">04:07</span></div>
- <div id="practiceChapters" class="fa-chapters" role="group" aria-label="选择指板练习段落" aria-controls="songVideo fretboard lessonSteps"></div>
-</section>
-<div class="workspace">
-<aside class="song-panel">
- <div class="song-cover"><video id="songVideo" preload="metadata" playsinline controls poster="assets/poster.jpg" src="assets/currently-full.mp4" aria-label="Currently 完整演奏与指板跟随"></video><span class="cover-label">完整演奏 · 04:07</span></div>
- <div class="song-info"><div class="eyebrow">正在学习 · 完整演奏</div><h2>Currently</h2><p>Keaton Simons <span>· 现场演奏</span></p><a class="source-link" href="https://www.youtube.com/watch?v=p9AJpi3jRWc" target="_blank" rel="noopener">在 YouTube 看完整演奏 ↗</a></div>
- <div class="playback-tools"><button class="primary song-play" id="playSong">▶ 播放完整演奏</button><label>播放速度 <select id="speedSelect" aria-label="完整演奏播放速度"><option value="0.5">0.5 ×</option><option value="0.75">0.75 ×</option><option value="1" selected>1.0 ×</option></select></label><label>循环范围 <select id="loopMode" aria-label="指板练习循环范围"><option value="none" selected>不循环</option><option value="chord">当前和弦</option><option value="section">当前段落</option></select></label><label class="check-label"><input type="checkbox" id="followSong" checked> 播放时跟随歌曲换和弦</label><div class="time-row"><span>原视频位置</span><strong id="absoluteTime">00:00.00</strong></div></div>
- <div class="practice-section-picker"><label for="practiceSection">选择练习段落</label><select id="practiceSection" aria-label="选择全曲练习段落"><option value="all">全曲 · 所有段落</option></select></div>
- <div class="scope-switch" role="group" aria-label="学习范围"><button id="allScope" class="selected">全曲和弦</button><button id="tailScope">入门3和弦</button></div>
- <p id="practiceCoverage" class="practice-coverage">00:00–04:07 · 全曲和弦与 Solo 分段练习</p>
- <div id="lessonSteps" class="lesson-steps" aria-label="全曲和弦与旋律步骤"></div>
- <p id="practiceProgress" class="practice-progress" aria-label="练习进度"></p>
- <div class="song-footnote"><span class="status-tag">教学按法</span><p>全曲候选和弦按标准调弦配音；不确定处保留待核对，Solo 练习与原片逐音谱分开展示。</p></div>
-</aside>
-<section class="learning-panel" aria-label="指板学习区">
- <div class="chord-heading"><div><div class="eyebrow" id="stepKicker">全曲练习 · 先选一段开始</div><div class="chord-title-row"><h2 id="chordName">Currently</h2><span class="status-tag light" id="modeTag">教学按法</span></div><p id="chordSubtitle">把和弦作用落到每一个按位</p></div><div class="chord-controls"><button class="primary" id="playChord"><span>♪</span> 听这个和弦</button><button class="secondary" id="playArpeggio">逐弦听音</button></div></div>
- <div id="customBanner" class="custom-banner" hidden><span>你正在改变按位。下方名称按实际发声音重新识别。</span><button id="restoreChord">回到歌曲按法 ↩</button></div>
- <div id="songContext" class="song-context" hidden></div>
- <section id="soloPractice" class="solo-practice" aria-label="Solo 旋律指板练习" hidden></section>
- <div class="tone-strip"><span class="strip-label">和弦构成</span><div id="toneChips" class="tone-chips"></div><span id="omissionNote" class="omission-note"></span></div>
- <div id="harmonicContext" class="harmonic-context"></div>
- <p id="practiceEvidence" class="practice-evidence" aria-label="当前按法与音轨证据"></p>
- <div class="board-card"><div class="board-toolbar"><div><strong>六弦指板</strong><span>标准调弦 · 无变调夹</span></div><div class="label-switch" aria-label="指板标签"><button class="selected" data-label="note">音名</button><button data-label="degree">音程</button><button data-label="finger">指号</button></div></div>
- <div class="board-instruction"><span>上方是最细的 1 弦 · 下方是最粗的 6 弦</span><label><input type="checkbox" id="showAllNotes"> 显示全部音名</label></div>
- <p class="board-role-help">圆点下方标注当前和弦内的音级；右上角小数字是左手指号。♭ 降、♯ 升、♭♭ 重降。</p>
- <div class="board-scroll" tabindex="0" aria-label="可横向滚动的吉他指板"><div id="fretboard" class="fretboard"></div></div>
- <div class="board-bottom"><div class="role-legend"><span><i class="root"></i>根音</span><span><i class="third"></i>三音</span><span><i class="fifth"></i>五音</span><span><i class="seventh"></i>七音</span><span><i class="color"></i>色彩音</span></div><span>点按位可试音 · 再点可取消</span></div></div>
- <div class="string-inspector"><div class="section-label">实际发声 <span>按六弦 → 一弦排列</span></div><div id="stringNotes" class="string-notes"></div></div>
- <div class="explain-grid"><article class="explain-card"><div class="card-kicker"><span>01</span> 手怎么放</div><h3 id="tabText">6 x 6 7 6 x</h3><p id="fingerGuide"></p><div class="finger-key"><b>1</b> 食指 <b>2</b> 中指 <b>3</b> 无名指 <b>4</b> 小指</div><details id="alternateWrap"><summary>另一种按法建议</summary><p id="alternateText"></p></details></article><article class="explain-card theory"><div class="card-kicker"><span>02</span> 为什么是这个和弦</div><h3 id="whyTitle">这些音，一起形成 B♭7</h3><p id="whyText"></p><div class="movement" id="movementText"></div></article></div>
- <div class="step-footer"><button class="secondary" id="prevChord">← 上一步</button><label class="check-label practice-check"><input type="checkbox" id="practiced"> 这一步我练过了</label><button class="primary" id="nextChord">下一步 →</button></div>
- <section class="mini-practice"><div><div class="eyebrow">可选入门练习 · 三个和弦的声部连接</div><h3>只移动一格，听见变化。</h3><p>先只弹二弦：<strong>6 品 F → 7 品 F♯ → 8 品 G</strong>。再放回三个和弦的教学配音里，听紧张怎样走向稳定。</p><button id="playMelody" class="text-button">♪ 听这三个音</button></div><div class="melody-path"><button data-melody="65"><small>2 弦 · 6 品</small><strong>F</strong><span>B♭7 的五音</span></button><b>→</b><button data-melody="66"><small>2 弦 · 7 品</small><strong>F♯</strong><span>升高五音</span></button><b>→</b><button data-melody="67"><small>2 弦 · 8 品</small><strong>G</strong><span>E♭ 的三音</span></button></div></section>
- <details class="practice-audio"><summary>继续练：60 BPM 简化练习与创作变化</summary><div><p>下面是四小节教学改写的合成示范，不是原演奏。节拍采用 4/4、60 BPM。</p><p class="practice-chords">Dm7♭5 · Cm7 ｜ B♭m7 · A7 · A♭9 ｜ A°7 · B♭7 ｜ E♭</p><label>基础练习<audio controls preload="none" src="assets/practice.wav"></audio></label><label>创作变化：用 F♯ → G 收束<audio controls preload="none" src="assets/variation.wav"></audio></label></div></details>
-</section>
-</div>
-</section>
-<footer><span>弦上 · 从一段喜欢的音乐开始</span><button id="evidenceButton">查看本课依据与待核对内容 ↗</button></footer>
+<section class="library-hero"><p class="library-kicker">从喜欢的演奏开始 · 你的吉他曲库</p><h1>选一首喜欢的歌，<br>慢慢弹懂它<span>。</span></h1><p class="library-intro">看完整演奏，听清根音的去向，再把每个和弦放到指板上。<br>从一段开始练，把听到的音乐变成自己的表达。</p></section>
+<section aria-labelledby="libraryHeading"><div class="library-section-heading"><h2 id="libraryHeading">今天，想练哪一首？</h2><p>两首歌 · 两种学习路线</p></div><div id="songLibrary" class="song-library"></div><noscript><p>请选择一首歌曲：<a href="study.html?song=currently">Currently</a> · <a href="study.html?song=sunshine">Ain’t No Sunshine</a>。交互指板需要启用 JavaScript。</p></noscript></section>
+<section class="library-how" aria-label="怎样用一首歌学习吉他"><article><h3><span>01</span>先听全貌</h3><p>找到调性、段落和节奏，知道现在的音乐走到了哪里。</p></article><article><h3><span>02</span>再落到手上</h3><p>视频与段落同步，指板同时显示音名、和弦音级和左手指号。</p></article><article><h3><span>03</span>最后做一点变化</h3><p>先练简化版本，再试着改变节奏、声部或旋律，写出自己的小句子。</p></article></section>
+<footer><span>弦上 · 从一段喜欢的音乐开始</span><span>每首课分别标明视频、谱面、分析与教学改写的依据。</span></footer>
 </main>
-<dialog id="helpDialog"><button class="dialog-close" aria-label="关闭帮助">×</button><div class="eyebrow">第一步，不急着记和弦名</div><h2>三个数字，分开看。</h2><div class="help-items"><p><b>弦号</b> 第 1 弦最细、声音较高；第 6 弦最粗、声音较低。指板从上到下是 1 → 6 弦。</p><p><b>品位</b> 上方的 1、2、3…是从琴头开始数的格子。按在格子靠近右侧品丝的位置。</p><p><b>指号</b> 音符旁的小数字是左手手指：1 食指、2 中指、3 无名指、4 小指。</p><p><b>× 与 0</b> × 表示这根弦不发声；0 表示不按品、弹空弦。点击左侧 × 可以切换空弦。</p></div><p class="dialog-tip">先选择左边的 B♭7，点“逐弦听音”，再逐一看看下方的实际音名。</p><button class="primary dialog-close">开始试一试</button></dialog>
-<dialog id="evidenceDialog"><button class="dialog-close" aria-label="关闭依据">×</button><div class="eyebrow">本课的四层依据</div><h2>练习可以明确，证据也要明确。</h2><dl><dt>已确认的音轨</dt><dd>来源为 YouTube p9AJpi3jRWc，Keaton Simons 的 Currently 现场演奏。完整音轨可解码，时长约 247.38 秒。全曲分析与指板练习均使用完整视频；三个入门和弦可单独选择。</dd><dt>谱面信息</dt><dd>尚未取得作者原谱。全曲页列出第三方简化谱与网友谱，并说明它们不等于本次现场版本。</dd><dt>分析候选</dt><dd>和弦名称和边界来自频谱、音高分析与画面对照，尚未完成人工逐音校订。E♭大调中心是当前和声分析工作结论；速度、拍号与具体音符仍按证据标为候选。</dd><dt>教学改写</dt><dd>指板按标准调弦重新配音；手指标记是可行的教学建议，原演奏调弦、变调夹与逐指动作未确认。Solo 的简化音序与按位也是教学改写，不与原片逐音同步。合成试音只演示音高关系，不能模拟原录音音色。</dd></dl><p class="dialog-tip">自由指板按实际发声音识别，音数不足会显示单音或音组；有多种解释时保留候选。</p></dialog>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="lesson-data.js"></script><script src="music-core.js"></script><script src="full-analysis-data.js"></script><script src="practice-data.js"></script><script src="app.js?v=20261114-chord-roles"></script><script src="full-analysis.js?v=20261111-section-sync"></script><script src="integration.js"></script>
-</body></html>
+<script src="songs.js?v=20261114-song-library"></script><script src="library.js?v=20261114-song-library"></script>
+</body>
+</html>

@@ -57,10 +57,10 @@
       analysisEvent: clone(event),
       confidence: event.confidence || 'low',
       evidence: event.evidence || '',
-      sourceStatus: 'audio_algorithm_candidate',
-      auditoryVerified: false,
-      fingeringStatus: shape ? 'teaching_arrangement' : 'unresolved',
-      timingStatus: 'approximate_boundary',
+      sourceStatus: event.sourceStatus || 'audio_algorithm_candidate',
+      auditoryVerified: event.auditoryVerified === true,
+      fingeringStatus: shape ? shape.fingeringStatus || 'teaching_arrangement' : 'unresolved',
+      timingStatus: event.timingStatus || 'approximate_boundary',
       fingers: [...voicing.fingerNumbers],
       transition: event.functionText || '结合前后乐句观察去向，暂不补写未确定的解决。',
       contextText,
@@ -112,9 +112,9 @@
       timeSynchronized: false
     };
   }
-  const soloSource = sections.find(section => section.type === 'solo')?.soloPhrases || [];
+  const soloSource = sections.flatMap(section => section.type === 'solo' ? section.soloPhrases || [] : []);
   const soloPhrases = soloSource.map((phrase, index) => {
-    const plan = exercisePlans[index];
+    const plan = (lesson.practice?.soloPlans || ((!lesson.id || lesson.id==='currently') ? exercisePlans : []))[index];
     return {
       ...clone(phrase),
       id: `solo-exercise-${index}`,

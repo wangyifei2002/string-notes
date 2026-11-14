@@ -1,6 +1,6 @@
 (()=>{
  'use strict';
- const $=id=>document.getElementById(id),pauseMedia=()=>document.querySelectorAll('audio,video').forEach(m=>m.pause());
+ const $=id=>document.getElementById(id),pauseMedia=()=>window.MediaPlayers?window.MediaPlayers.pauseAll():document.querySelectorAll('audio,video').forEach(m=>m.pause());
  function show(mode){pauseMedia();window.StringNotes?.stopSynth();$('analysisView').hidden=mode!=='analysis';$('practiceView').hidden=mode==='analysis';$('analysisMode').classList.toggle('active',mode==='analysis');$('lessonMode').classList.toggle('active',mode==='practice');$('freeMode').classList.toggle('active',mode==='free');if(mode==='analysis')window.FullSongAnalysis?.show();}
  window.FullSongAnalysis?.init();
  $('analysisMode').addEventListener('click',()=>show('analysis'));

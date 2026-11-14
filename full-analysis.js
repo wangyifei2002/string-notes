@@ -38,6 +38,7 @@
     return `<div class="fa-solo-phrases"><h5>把 Solo 拆成几句来听</h5><p class="fa-solo-phrase-note">下面的音高与和声是频谱分析候选，用来帮助找旋律方向和落点，不是原版逐音谱。先听完整一句，再试着用自己的手指重现。</p><div class="fa-solo-phrase-grid">${phrases.map(({phrase:p,index},order)=>`<article class="fa-solo-phrase"><div class="fa-phrase-top"><span>乐句 ${order+1}</span><small>${clock(p.start,true)}—${clock(p.end,true)}</small></div><h6>${esc(p.title || `Solo 乐句 ${order+1}`)}</h6>${[['旋律怎样走',p.contour],['和声与落点',p.harmony],['简化练习',p.exercise]].filter(([,value])=>plain(value)).map(([label,value])=>`<div class="fa-phrase-line"><b>${label}</b><p>${esc(plain(value))}</p></div>`).join('')}${plain(p.evidence)?`<details><summary>音高候选与判断依据</summary><p>${esc(plain(p.evidence))}</p></details>`:''}<button class="fa-phrase-play" data-fa-phrase="${index}" aria-label="从${clock(p.start,true)}播放${esc(p.title || `Solo 乐句 ${order+1}`)}">▶ 从这一句听</button></article>`).join('')}</div></div>`;
   }
   function pauseOthers() {
+    if(window.MediaPlayers)window.MediaPlayers.pauseAll(player);
     document.querySelectorAll('audio,video').forEach(media => { if (media !== player) media.pause(); });
     window.dispatchEvent(new CustomEvent('full-song-play'));
   }
@@ -178,7 +179,12 @@
     <section class="fa-terms"><div><div class="fa-kicker">遇到术语，随时回来看看</div><h3>先把这些概念分清。</h3><p>同一个和弦，放在不同的前后关系里，可以承担不同的作用。</p></div><div data-fa="definitions"></div></section>
     <details class="fa-status"><summary><span>分析覆盖与仍需复核的内容</span><span>＋</span></summary><p data-fa="coverage"></p><div data-fa="limits"></div><div data-fa="sources" class="fa-sources"></div></details>`;
     player=$('[data-fa="video"]');
-    const src=String(data.meta?.videoSrc || '');if(src)player.src=src;
+    player.setAttribute('aria-label',`${window.LESSON?.source?.songTitle||data.meta.title||'本曲'} 完整演奏视频`);
+    if(window.SONG?.poster)player.poster=window.SONG.poster;
+    const timeLabel=host.querySelector('.fa-player-top>span');
+    if(data.meta.timeLabel)timeLabel.textContent=data.meta.timeLabel;
+    if(window.MediaPlayers)player=window.MediaPlayers.mount(player,data.meta);
+    else {const src=String(data.meta?.videoSrc || '');if(src)player.src=src;}
     player.preservesPitch=true;
     renderOverview();renderSection();renderNowPlaying();
     host.addEventListener('click',handleClick);

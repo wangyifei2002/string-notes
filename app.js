@@ -1,19 +1,21 @@
 (() => {
  'use strict';
- const $=id=>document.getElementById(id), data=window.LESSON, practice=window.PracticeData, events=practice.events, sections=practice.sections, core=window.GuitarCore, video=$('songVideo');
+ const $=id=>document.getElementById(id), data=window.LESSON, practice=window.PracticeData, events=practice.events, sections=practice.sections, core=window.GuitarCore, video=window.MediaPlayers?.mount($('songVideo'),window.FULL_ANALYSIS.meta)||$('songVideo');
+ const songId=data.id||window.SONG?.id||'currently', progressKey='string-notes-practiced:'+songId;
+ const introStarts=data.ui?.introStartTimes||[41.6,43.1,44.2];
  const flat=['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'];
  const colors={root:'#c6754e',third:'#8b76b6',fifth:'#538ca1',seventh:'#4f927e',color:'#b58c3d',unknown:'#7e8789'};
  const titles={'7':'属七和弦','m7':'小七和弦','m7b5':'半减七和弦','dim7':'减七和弦','7#5':'升五音属七和弦','9':'属九和弦','9(no5)':'省略五音的属九和弦','major':'大三和弦','minor':'小三和弦','maj7':'大七和弦','sus2':'挂二和弦','sus4':'挂四和弦','5':'五度和弦'};
  let selected=0, frets=[...events[0].frets], scope='all', sectionFilter=-1, custom=false,labelMode='note',showAll=false,melodyNote=null,activePhrase=0,pendingSeek=null,loopAnchor=null;
  let practiced=new Set(), audioCtx=null, liveOsc=[], toastTimer=0, scheduledVisual=[], mapSectionIndex=-1;
- try{practiced=new Set(JSON.parse(localStorage.getItem('string-notes-practiced')||'[]'));}catch{}
+ try{practiced=new Set(JSON.parse(localStorage.getItem(progressKey)||(songId==='currently'?localStorage.getItem('string-notes-practiced'):null)||'[]'));}catch{}
  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const clock=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${(t%60).toFixed(2).padStart(5,'0')}`;
  const current=()=>events[selected];
  const timeBase=()=>0;
  const playbackTime=()=>pendingSeek?.time??video.currentTime;
  const shortClock=t=>`${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
- const visibleIndices=()=>events.map((_,i)=>i).filter(i=>scope==='tail'?[41.6,43.1,44.2].some(t=>Math.abs(events[i].start-t)<.02):scope==='section'?events[i].start<sections[sectionFilter].end&&events[i].end>sections[sectionFilter].start:true);
+ const visibleIndices=()=>events.map((_,i)=>i).filter(i=>scope==='tail'?introStarts.some(t=>Math.abs(events[i].start-t)<.02):scope==='section'?events[i].start<sections[sectionFilter].end&&events[i].end>sections[sectionFilter].start:true);
  function roleOf(degree){const step=Number(String(degree).match(/\d+$/)?.[0]);return({1:'root',3:'third',5:'fifth',7:'seventh'})[step]||(step?'color':'unknown');}
  function chordRole(note){
   if(melodyNote&&!custom)return{degree:'',name:'旋律音'};
@@ -37,7 +39,7 @@
   return{name,quality,rootPc,tones,notes:expanded,candidates};
  }
  function notify(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600);}
- function pauseOtherMedia(except){document.querySelectorAll('audio,video').forEach(el=>{if(el!==except)el.pause();});}
+ function pauseOtherMedia(except){if(window.MediaPlayers)return window.MediaPlayers.pauseAll(except);document.querySelectorAll('audio,video').forEach(el=>{if(el!==except)el.pause();});}
  function stopSynth(){scheduledVisual.forEach(clearTimeout);scheduledVisual=[];liveOsc.forEach(n=>{try{n.stop();}catch{}});liveOsc=[];}
  async function ensureAudio(){if(!audioCtx){const C=window.AudioContext||window.webkitAudioContext;if(!C)throw new Error('no_audio');audioCtx=new C();}if(audioCtx.state==='suspended')await audioCtx.resume();return audioCtx;}
  function tone(midi,start,duration=1.4,volume=.1){const gain=audioCtx.createGain(), filter=audioCtx.createBiquadFilter(), oscillator=audioCtx.createOscillator();const f=440*Math.pow(2,(midi-69)/12);oscillator.type='triangle';oscillator.frequency.value=f;filter.type='lowpass';filter.frequency.setValueAtTime(Math.min(5000,f*9),start);filter.frequency.exponentialRampToValueAtTime(Math.max(300,f*2),start+duration);gain.gain.setValueAtTime(0,start);gain.gain.linearRampToValueAtTime(volume,start+.006);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);oscillator.connect(filter).connect(gain).connect(audioCtx.destination);oscillator.start(start);oscillator.stop(start+duration+.03);liveOsc.push(oscillator);oscillator.onended=()=>{oscillator.disconnect();filter.disconnect();gain.disconnect();liveOsc=liveOsc.filter(o=>o!==oscillator);};}
@@ -75,7 +77,7 @@
  function selectedSection(){return sections[scope==='section'?sectionFilter:practice.sectionAt(Math.max(current().start,Math.min(playbackTime(),current().end-.001)))];}
  function refreshLoop(){const mode=$('loopMode').value,section=selectedSection();loopAnchor=mode==='chord'?{start:scope==='section'?Math.max(current().start,section.start):current().start,end:scope==='section'?Math.min(current().end,section.end):current().end}:mode==='section'?{start:section.start,end:section.end}:null;}
  function renderSolo(){
-  const section=selectedSection(),show=section?.type==='solo';$('soloPractice').hidden=!show;if(!show)return;
+  const section=selectedSection(),show=section?.type==='solo'&&practice.soloPhrases.length>0;$('soloPractice').hidden=!show;if(!show)return;
   const phrases=practice.soloPhrases;if(activePhrase<0||activePhrase>=phrases.length)activePhrase=0;const phrase=phrases[activePhrase];
   $('soloPractice').innerHTML=`<div class="eyebrow">Solo · 逐音练习按位</div><h3>先练一句旋律，再听原片。</h3><p>下面是依据分析材料设计的简化练习，音序、节奏和把位均为教学改写。原片播放时只跟随和声候选，不把这些练习音伪装成逐音转录。</p><div class="solo-phrase-tabs">${phrases.map((p,i)=>`<button data-solo-phrase="${i}" class="${i===activePhrase?'selected':''}">${i+1} · ${esc(p.title)}</button>`).join('')}</div><p><strong>${clock(phrase.start)}–${clock(phrase.end)}</strong> · ${esc(phrase.exercise)}</p><div class="solo-note-buttons">${phrase.teachingNotes.map((n,i)=>`<button data-solo-note="${i}" class="${melodyNote?.practiceIndex===i?'selected':''}"><strong>${esc(n.name)}</strong><span>${n.string}弦 ${n.fret}品 · ${n.finger}指</span></button>`).join('')}</div><div class="solo-practice-actions"><button class="secondary" data-solo-action="sequence">♪ 听简化练习</button><button class="primary" data-solo-action="original">▶ 对照这一句原片</button><button class="text-button" data-solo-action="restore">回到全曲跟随</button></div><small>${esc(phrase.teachingLabel||'教学音序 · 不按原演奏时间逐音同步')}</small>`;
  }
@@ -92,15 +94,15 @@
   if(custom){scroller.scrollLeft=previousScroll;}else if(scroller.scrollWidth>scroller.clientWidth){const active=[...$('fretboard').querySelectorAll('.is-active')];if(active.length){const left=Math.min(...active.map(el=>el.offsetLeft)),right=Math.max(...active.map(el=>el.offsetLeft+el.offsetWidth));scroller.scrollLeft=Math.max(0,(left+right)/2-scroller.clientWidth/2);}}
  }
  function render(){const view=getView(),s=current(),pos=visibleIndices().indexOf(selected);renderSteps();renderBoard(view);renderSolo();updatePracticeMap();
-  const section=selectedSection();$('songContext').hidden=false;$('songContext').innerHTML=`<strong>${esc(section.title)} · ${clock(s.start)}–${clock(s.end)}</strong><span>${melodyNote?'正在查看独立的Solo教学音；点击“回到全曲跟随”恢复原片时间轴。':s.notes.length?'全曲连续跟随 · 此处显示可弹的教学配音；不是原演奏逐指复原。':'此处未确定完整和弦。空指板表示尚未标注，不表示原演奏静音。'}</span>`;
-  $('followSong').disabled=false;document.querySelector('.cover-label').textContent='完整原演奏 · 4分7秒';
+  const section=selectedSection();$('songContext').hidden=false;$('songContext').innerHTML=`<strong>${esc(section.title)} · ${clock(s.start)}–${clock(s.end)}</strong><span>${melodyNote?'正在查看独立的Solo教学音；点击“回到全曲跟随”恢复原片时间轴。':s.notes.length?'全曲连续跟随 · 此处显示可弹的教学配音；不是原演奏逐指复原。':esc(s.analysisEvent?.practiceMessage||'此处未确定完整和弦。空指板表示尚未标注，不表示原演奏静音。')}</span>`;
+  $('followSong').disabled=false;document.querySelector('.cover-label').textContent='完整演奏 · '+shortClock(data.source.duration);
   const harmony=s.analysisEvent;
-  $('harmonicContext').hidden=custom||!!melodyNote||!harmony;$('harmonicContext').innerHTML=harmony?`<div><small>E♭ 大调参照 · 根音级数</small><strong>${esc(harmony.rootDegree)} <span>${esc(harmony.roman)}</span></strong></div><p>${esc(harmony.functionText)}</p>`:'';
+  $('harmonicContext').hidden=custom||!!melodyNote||!harmony;$('harmonicContext').innerHTML=harmony?`<div><small>${esc(window.FULL_ANALYSIS.overview.tonic)} 调性参照 · 根音级数</small><strong>${esc(harmony.rootDegree)} <span>${esc(harmony.roman)}</span></strong></div><p>${esc(harmony.functionText)}</p>`:'';
   if(!$('practiceView').hidden){$('lessonMode').classList.toggle('active',!custom);$('freeMode').classList.toggle('active',custom);}$('customBanner').hidden=!custom;
   $('stepKicker').textContent=custom?'自由探索 · 每根弦选择一个按位':melodyNote?'Solo简化练习 · 当前单音按位':`全曲第 ${selected+1} / ${events.length} 处 · ${section.title}`;
-  $('chordName').textContent=view.name;$('modeTag').textContent=custom?'音组识别':melodyNote?'旋律教学改写':s.notes.length?'教学按法':'待核对';
-  $('chordSubtitle').textContent=custom?(view.candidates.length?`按实际音组识别${view.candidates.length>1?' · 其他解释：'+view.candidates.slice(1).map(c=>c.label).join('、'):''}`:view.notes.length?'只显示实际音高；尚未确定和弦。':'点击指板开始选音。'):melodyNote?`${melodyNote.string}弦 ${melodyNote.fret}品 · 左手${melodyNote.finger}指 · 独立教学音序`:s.quality?`${titles[s.quality]||s.quality} · 原视频约 ${clock(s.start)}`:s.kind==='solo'?'Solo旋律区域 · 完整和弦与原指法待核对':s.kind==='decay'?'余音与静默 · 不新增和弦':'连接音型 · 根音与原指法待核对';
-  $('practiceEvidence').textContent=melodyNote?'教学改写：该按位可以发出所示音高，但不代表原演奏者当时的动作。':`${({high:'较一致候选',medium:'分析候选',low:'需复核'})[harmony.confidence]||'待核对'}：${harmony.evidence||'暂无可靠原音指法。'}`;
+  $('chordName').textContent=view.name;$('modeTag').textContent=custom?'音组识别':melodyNote?'旋律教学改写':s.notes.length?'教学按法':s.analysisEvent?.practiceMessage?'留白练习':'待核对';
+  $('chordSubtitle').textContent=custom?(view.candidates.length?`按实际音组识别${view.candidates.length>1?' · 其他解释：'+view.candidates.slice(1).map(c=>c.label).join('、'):''}`:view.notes.length?'只显示实际音高；尚未确定和弦。':'点击指板开始选音。'):melodyNote?`${melodyNote.string}弦 ${melodyNote.fret}品 · 左手${melodyNote.finger}指 · 独立教学音序`:s.quality?`${titles[s.quality]||s.quality} · 本次演奏 ${clock(s.start)}`:s.kind==='solo'?'Solo旋律区域 · 完整和弦与原指法待核对':s.kind==='decay'?'余音与静默 · 不新增和弦':'连接音型 · 根音与原指法待核对';
+  $('practiceEvidence').textContent=melodyNote?'教学改写：该按位可以发出所示音高，但不代表原演奏者当时的动作。':`${({confirmed:'已核对',verified:'已核对',high:'较一致候选',medium:'分析候选',low:'需复核'})[harmony.confidence]||'待核对'}：${harmony.evidence||'暂无可靠原音指法。'}`;
   $('toneChips').innerHTML=view.tones.map(t=>`<div class="tone-chip ${t.present===false?'omitted':''}" style="--role-color:${colors[roleOf(t.degree)]}"><i></i><b>${esc(t.name)}</b><span>${esc(t.degree)}${t.present===false?' · 省略':''}</span></div>`).join('')||'<span class="omission-note">还没有发声音</span>';
   $('omissionNote').textContent=view.tones.some(t=>t.present===false)?'虚线音未在此指法中弹出。':'';
   $('stringNotes').innerHTML=frets.map((f,i)=>{const n=view.notes.find(n=>n.string===6-i);const role=n?(custom&&!view.candidates.length&&n.degree==='1'?'参照音':n.role):'';return`<button class="string-note ${f<0?'muted':''}" data-play-string="${i}" style="--role-color:${n?colors[roleOf(n.degree)]:'#aaa'}"><small>${6-i} 弦 · ${f<0?'不弹':f===0?'空弦':f+' 品'}</small><b>${n?esc(n.label):'×'}</b><span>${n?esc(n.degree+' · '+role):(!custom&&!melodyNote&&!s.notes.length?'未标注':'轻触止音')}</span></button>`;}).join('');
@@ -138,11 +140,11 @@
  $('stringNotes').addEventListener('click',e=>{const b=e.target.closest('[data-play-string]');if(!b)return;let i=Number(b.dataset.playString),n=core.noteAt(i,frets[i]);if(n)playNotes([n.midi]);else notify(`${6-i} 弦不弹，保持静音。`);});
  $('playChord').addEventListener('click',()=>{playNotes(core.notesFor(frets).filter(Boolean).map(n=>n.midi));notify('合成试音 · 实际发声的和弦音');});
  $('playArpeggio').addEventListener('click',()=>playNotes(core.notesFor(frets).filter(Boolean).map(n=>n.midi),.48));
- $('playMelody').addEventListener('click',()=>playNotes([65,66,67],.85));
+ $('playMelody').addEventListener('click',()=>playNotes([...document.querySelectorAll('[data-melody]')].map(b=>Number(b.dataset.melody)),.85));
  document.querySelectorAll('[data-melody]').forEach(b=>b.addEventListener('click',()=>playNotes([Number(b.dataset.melody)])));
  $('prevChord').onclick=()=>selectChord(selected-1);
  $('nextChord').onclick=()=>selectChord(selected+1);
- $('tailScope').onclick=()=>{scope='tail';selectChord(events.findIndex(e=>Math.abs(e.start-41.6)<.02));};$('allScope').onclick=()=>{scope='all';render();};
+ $('tailScope').onclick=()=>{const first=events.findIndex(e=>introStarts.some(t=>Math.abs(e.start-t)<.02));if(first<0)return;scope='tail';selectChord(first);};$('allScope').onclick=()=>{scope='all';render();};
  $('restoreChord').onclick=()=>restore();
  document.querySelectorAll('[data-label]').forEach(b=>b.onclick=()=>{labelMode=b.dataset.label;document.querySelectorAll('[data-label]').forEach(x=>x.classList.toggle('selected',x===b));renderBoard(getView());});
  $('showAllNotes').onchange=e=>{showAll=e.target.checked;renderBoard(getView());};
@@ -166,9 +168,9 @@
  video.addEventListener('seeked',()=>{if(pendingSeek?.applied&&!video.seeking)pendingSeek=null;updateFromTime();});
  video.addEventListener('play',()=>{pauseOtherMedia(video);stopSynth();if(custom&&$('followSong').checked)restore();});
  video.addEventListener('ended',()=>{if(loopAnchor&&!custom){seek(loopAnchor.start);video.play().catch(()=>notify('请点播放继续循环。'));}});
- video.addEventListener('error',()=>notify('原片段暂未加载，可先用指板合成试音。'));
+ video.addEventListener('error',()=>notify('完整演奏暂未加载，可先用指板合成试音。'));
  document.querySelectorAll('audio').forEach(a=>a.addEventListener('play',()=>{pauseOtherMedia(a);stopSynth();}));
- $('practiced').onchange=e=>{if(e.target.checked)practiced.add(current().id);else practiced.delete(current().id);try{localStorage.setItem('string-notes-practiced',JSON.stringify([...practiced]));}catch{}renderSteps();};
+ $('practiced').onchange=e=>{if(e.target.checked)practiced.add(current().id);else practiced.delete(current().id);try{localStorage.setItem(progressKey,JSON.stringify([...practiced]));}catch{}renderSteps();};
  for(const [trigger,dialog] of [['helpButton','helpDialog'],['evidenceButton','evidenceDialog']]){$(trigger).onclick=()=>$(dialog).showModal();$(dialog).querySelectorAll('.dialog-close').forEach(b=>b.onclick=()=>$(dialog).close());$(dialog).addEventListener('click',e=>{if(e.target===$(dialog)){const r=$(dialog).getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)$(dialog).close();}});}
  video.addEventListener('loadedmetadata',()=>{applyPendingSeek();updateFromTime();});
  video.addEventListener('canplay',()=>{applyPendingSeek();updateFromTime();});
@@ -188,7 +190,7 @@
  });
  function showMelodyNote(index,audition=false){const n=practice.soloPhrases[activePhrase].teachingNotes[index];if(!n)return;custom=false;melodyNote={...n,practiceIndex:index};frets=[-1,-1,-1,-1,-1,-1];frets[6-n.string]=n.fret;$('followSong').checked=false;if(audition)playNotes([n.midi]);render();}
  async function playSoloExercise(){pauseOtherMedia();stopSynth();const phrase=practice.soloPhrases[activePhrase];try{await ensureAudio();const now=audioCtx.currentTime+.025;phrase.teachingNotes.forEach((n,i)=>{tone(n.midi,now+i*.6,.8,.12);scheduledVisual.push(setTimeout(()=>showMelodyNote(i),25+i*600));});notify('合成简化练习 · 指板按教学音序移动');}catch{notify('暂时无法试音，仍可逐个点击音名查看按位。');}}
- video.src=window.FULL_ANALYSIS.meta.videoSrc;renderPracticeMap();render();
+ if(!window.MediaPlayers)video.src=window.FULL_ANALYSIS.meta.videoSrc;renderPracticeMap();render();
 
  window.StringNotes={getState:()=>({selected,total:events.length,scope,sectionFilter,custom,melodyNote:melodyNote?.name||null,frets:[...frets],view:getView(),sourceTime:video.currentTime,loopAnchor}),selectChord,showAt,goToTime,selectSection,openPractice:()=>restore({seek:false}),enterFree:()=>{enterCustom();render();},stopSynth};
 })();
