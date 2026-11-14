@@ -51,6 +51,12 @@
 .study-status p{font-size:13px;line-height:1.9;color:#77866c}
 .study-status a{font-size:13px;text-underline-offset:5px}
 .mini-practice[hidden],.practice-audio[hidden]{display:none!important}
+.library-shapes{display:flex;align-items:center;justify-content:space-between;gap:25px;margin-top:28px;padding:24px 27px;border:1px solid #d7e1ca;border-radius:12px;background:#edf2e6}
+.library-shapes h2{font-size:17px;font-weight:600;margin:0 0 8px}
+.library-shapes p{font-size:12px;color:#75836c;line-height:1.9;margin:0}
+.library-shapes>a{font-size:12px;color:#2c573e;white-space:nowrap;text-underline-offset:5px}
+.study-selection{flex-wrap:wrap}
+.study-selection .study-song-picker{margin-left:auto}
 @media(max-width:760px){
  .library-page main{padding-top:35px}
  .song-library{gap:18px}
@@ -62,6 +68,9 @@
  .library-header-note{font-size:10px}
 }
 @media(max-width:560px){
+ .library-shapes{align-items:flex-start;flex-direction:column;gap:15px;padding:22px}
+ .library-shapes h2{font-size:15px;line-height:1.8}
+ .study-selection .study-song-picker{flex-basis:100%;max-width:100%}
  .library-page .topbar{height:72px}
  .library-header-note{font-size:9px;max-width:115px;text-align:right;line-height:1.8}
  .library-hero{margin-bottom:29px}

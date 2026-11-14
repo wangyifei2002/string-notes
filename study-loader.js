@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  const version = '20261114-hands';
+  const version = '20261114-shapes';
   const songs = window.SONGS || [];
   const selectedId = new URLSearchParams(location.search).get('song') || 'currently';
   const song = songs.find(item => item.id === selectedId);
@@ -101,7 +101,7 @@
     window.SONG = song;
     $('#studyStatusMessage').textContent = `正在准备 ${song.title} 的视频、音乐分析与指板练习。`;
     try {
-      for (const path of [song.lessonSrc, 'music-core.js', song.analysisSrc]) await loadScript(path);
+      for (const path of [song.lessonSrc, 'music-core.js', 'chord-shapes.js', song.analysisSrc]) await loadScript(path);
       hydrateLesson();
       for (const path of ['media-player.js', 'practice-data.js', 'app.js', 'full-analysis.js', 'integration.js']) await loadScript(path);
       if (!window.StringNotes || !window.FullSongAnalysis) throw new Error('Lesson interface did not initialize');

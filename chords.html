@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="弦上和弦手形库：学习经典常用和弦的完整按法、组成音、根音位置与可迁移的练习，再带回歌曲。"><title>弦上 · 常用和弦手形库</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="chords.css?v=20261114-shapes"></head>
+<body class="shapes-page">
+<header class="topbar"><a class="brand" href="index.html" aria-label="返回弦上曲库"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="学习入口"><a href="index.html">歌曲练习</a><a href="chords.html" aria-current="page">常用和弦手形</a></nav></header>
+<main>
+<section class="shape-hero"><div class="eyebrow">从一首歌，带走能反复使用的手形</div><h1>把和弦，学到手上<span>。</span></h1><p>先认根音，再把手放稳；听清三音、五音和七音，最后把同一个手形带到其他歌曲里。</p></section>
+<div class="shape-workspace">
+<aside class="shape-picker" aria-label="选择常用和弦"><div class="shape-picker-head"><h2>今天练哪个和弦？</h2><span id="shapeCount"></span></div><label for="shapeFamily">手形类别</label><select id="shapeFamily"><option value="all">全部类别</option></select><label for="shapeSearch">查找和弦</label><input id="shapeSearch" type="search" placeholder="例如 Am、属七、横按" autocomplete="off"><div id="shapeList" class="shape-list" role="group" aria-label="常用和弦列表"></div><p id="shapeEmpty" hidden>没有匹配的手形。清空查找或选择其他类别。</p></aside>
+<section id="shapeDetails" class="shape-details" aria-label="当前和弦手形" hidden>
+<div class="shape-title-row"><div><div id="shapeFamilyLabel" class="eyebrow"></div><h2 id="shapeName"></h2><p id="shapeDescription"></p></div><span id="shapeSourceLabel" class="shape-source-label"></span></div>
+<div class="shape-context"><strong>这里练常用按法之一，指号可随手型与前后连接调整。</strong><span>合成试听会拨响图中全部实心音点。歌曲里可能只选其中几根弦，回到歌曲练习页查看本次选弦。</span></div>
+<div class="shape-facts"><div><span>和弦构成</span><strong id="shapeFormula"></strong></div><div><span>此按法发声</span><strong id="shapeTones"></strong></div><div><span>先找根音</span><strong id="shapeRoots"></strong></div></div><p id="shapeOmissions" class="shape-omissions" hidden></p>
+<div class="shape-actions"><button id="shapePlay" class="primary" type="button">♪ 听完整和弦</button><button id="shapeArpeggio" class="secondary" type="button">逐弦听音</button><button id="shapeStop" class="text-button" type="button">停止声音</button></div>
+<section class="shape-board-card" aria-label="经典完整按法指板"><div class="shape-board-head"><h3>六弦指板</h3><span>标准调弦 · 无变调夹</span></div><p class="shape-board-help">上方是最细的 1 弦，下方是最粗的 6 弦。圆点内是音名，下方是和弦音级，右上角是左手指号。× 不拨；0 弹空弦。</p><div class="shape-board-scroll" tabindex="0" aria-label="可横向滚动的和弦指板"><div id="shapeBoard"></div></div><div class="shape-colors"><span><i class="root"></i>根音</span><span><i class="third"></i>三音</span><span><i class="fifth"></i>五音</span><span><i class="seventh"></i>七音</span><span><i class="color"></i>延伸音</span></div></section>
+<div class="shape-learning-grid"><article><div class="shape-card-kicker">01 · 左手怎么放</div><h3 id="shapeTab"></h3><p class="shape-tab-help">六弦 → 一弦 · x 不拨，0 为空弦</p><p id="shapeLeftText"></p><p id="shapeBarres"></p><div class="shape-finger-key">1 食指 · 2 中指 · 3 无名指 · 4 小指</div></article><article><div class="shape-card-kicker">02 · 怎样练得扎实</div><h3>从根音到完整和弦</h3><p id="shapePractice"></p><h4>把这个手形带走</h4><p id="shapeTransfer"></p></article></div>
+<section class="shape-song-links" aria-label="在歌曲里使用"><h3>回到歌曲，听它怎样连接。</h3><div id="shapeLessonLinks"></div><p id="shapeNoSong" hidden>这个手形先作为独立基础练习，当前两首课没有标注它的直接对应。</p></section>
+<details class="shape-sources"><summary>按法来源与使用说明</summary><p>这里收录经典常用按法或常用可移动配音。指号可以随手型和前后连接调整；来源用于核对手形与结构，并不表示某段现场演奏逐指采用了这一版。</p><p id="shapeSourceNote"></p><div id="shapeSources"></div></details>
+</section>
+</div>
+<p id="shapeStatus" class="shape-status" role="status" aria-live="polite"></p>
+<noscript><p>常用和弦手形库需要启用 JavaScript。<a href="index.html">返回歌曲曲库</a></p></noscript>
+<footer><span>弦上 · 把歌里的材料，变成自己的词汇</span><a href="index.html">返回歌曲曲库 ↗</a></footer>
+</main>
+<script src="music-core.js?v=20261114-shapes"></script><script src="chord-shapes.js?v=20261114-shapes"></script><script src="chords.js?v=20261114-shapes"></script>
+</body></html>

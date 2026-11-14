@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="选择喜欢的吉他演奏，结合音乐分析和指板练习学习。"><title>弦上 · 歌曲学习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-hands"><link rel="stylesheet" href="library.css?v=20261114-song-library"></head>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#183f35"><meta name="description" content="选择喜欢的吉他演奏，结合音乐分析和指板练习学习。"><title>弦上 · 歌曲学习</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="full-analysis.css?v=20261111-section-sync"><link rel="stylesheet" href="integration.css?v=20261114-shapes"><link rel="stylesheet" href="library.css?v=20261114-shapes"></head>
 <body class="study-page" data-study-state="loading">
 <header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">≋</span><span>弦上<small>STRING NOTES</small></span></a><nav aria-label="工作模式"><button id="analysisMode" class="nav-button active">全曲分析</button><button id="lessonMode" class="nav-button">指板练习</button><button id="freeMode" class="nav-button">自由指板</button></nav><button class="quiet" id="helpButton">怎样看指板 <span>?</span></button></header>
-<div class="study-selection"><a class="back-to-library" href="index.html">← 返回曲库</a><label class="study-song-picker" for="songSelect"><span>正在学习</span><select id="songSelect" aria-label="选择要练习的歌曲"></select></label></div>
+<div class="study-selection"><a class="back-to-library" href="index.html">← 返回曲库</a><a class="back-to-library" href="chords.html">常用和弦手形库 ↗</a><label class="study-song-picker" for="songSelect"><span>正在学习</span><select id="songSelect" aria-label="选择要练习的歌曲"></select></label></div>
 <section id="studyStatus" class="study-status" role="status" aria-live="polite"><div class="library-kicker">STRING NOTES · 歌曲学习</div><h1 id="studyStatusTitle">正在打开这首歌。</h1><p id="studyStatusMessage">准备视频、音乐分析与指板练习。</p><a href="index.html">返回曲库 →</a></section>
 <noscript><p class="study-status">歌曲分析与交互指板需要启用 JavaScript。<a href="index.html">返回曲库</a></p></noscript>
 <main id="studyContent">
@@ -37,6 +37,10 @@
  <div class="tone-strip"><span class="strip-label">和弦构成</span><div id="toneChips" class="tone-chips"></div><span id="omissionNote" class="omission-note"></span></div>
  <div id="harmonicContext" class="harmonic-context"></div>
  <p id="practiceEvidence" class="practice-evidence" aria-label="当前按法与音轨证据"></p>
+ <section id="shapeChoice" class="shape-choice" aria-label="按法来源与常用手形" hidden>
+  <div class="shape-choice-top"><label for="shapeMode">按法与练习方式 <select id="shapeMode"><option value="song">本曲按法与选弦</option></select></label><a id="openShapeLibrary" href="chords.html">打开常用和弦手形库 →</a></div>
+  <p id="shapeSourceNote"></p><p id="shapeTransfer" class="shape-transfer"></p>
+ </section>
  <section class="hand-plan" id="handPlan" aria-label="左手按法与右手选弦" hidden>
   <div class="hand-plan-heading"><h3>先摆好左手，再选择拨弦。</h3><p id="handPlanEvidence"></p></div>
   <div class="hand-plan-grid"><article class="explain-card"><div class="card-kicker"><span>01</span> 左手 · 怎么按</div><div id="leftHandSummary"><h3 id="tabText"></h3><p class="grip-key">六弦 → 一弦 · 数字是品位；0 不按品；— 未指定按位</p><p id="fingerGuide"></p></div><div class="finger-key"><b>1</b> 食指 <b>2</b> 中指 <b>3</b> 无名指 <b>4</b> 小指</div><details id="alternateWrap"><summary>另一种按法建议</summary><p id="alternateText"></p></details></article>
@@ -61,5 +65,5 @@
 <dialog id="helpDialog"><button class="dialog-close" aria-label="关闭帮助">×</button><div class="eyebrow">第一步，不急着记和弦名</div><h2>三个数字，分开看。</h2><div class="help-items"><p><b>弦号</b> 第 1 弦最细、声音较高；第 6 弦最粗、声音较低。指板从上到下是 1 → 6 弦。</p><p><b>品位</b> 上方的 1、2、3…是从琴头开始数的格子。按在格子靠近右侧品丝的位置。</p><p><b>指号</b> 音符旁的小数字是左手手指：1 食指、2 中指、3 无名指、4 小指。</p><p><b>按法与拨弦</b> 实心音点表示本次拨响；虚线音点表示保留的按位或空弦，本次不拨。左侧 × 表示不拨，0 表示拨空弦，● 表示拨按住的弦。点击按位会进入自由选音。</p></div><p class="dialog-tip">先选择一处和弦，点“逐弦听音”，再逐一看看指板上的音名、和弦音级与左手指号。</p><button class="primary dialog-close">开始试一试</button></dialog>
 <dialog id="evidenceDialog"><button class="dialog-close" aria-label="关闭依据">×</button><div class="eyebrow">本课的四层依据</div><h2>练习可以明确，证据也要明确。</h2><dl></dl><p class="dialog-tip">自由指板按实际发声音识别，音数不足会显示单音或音组；有多种解释时保留候选。</p></dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<script src="songs.js?v=20261114-song-library"></script><script src="study-loader.js?v=20261114-hands"></script>
+<script src="songs.js?v=20261114-song-library"></script><script src="study-loader.js?v=20261114-shapes"></script>
 </body></html>

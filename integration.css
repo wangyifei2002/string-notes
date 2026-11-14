@@ -92,6 +92,14 @@
 .held-role small{display:block;font-size:9px;color:#75816a}
 .hand-plan{margin:16px 0 23px}
 .hand-plan[hidden]{display:none}
+.shape-choice{margin:18px 0;padding:17px 20px;background:#f1f5ea;border:1px solid #d8e1ce;border-radius:10px}
+.shape-choice[hidden]{display:none}
+.shape-choice-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.shape-choice-top label{font-size:12px;font-weight:600;color:#365442;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.shape-choice-top select{font-size:12px;padding:6px 9px;max-width:100%}
+.shape-choice-top a{font-size:11px;color:#38603e;text-underline-offset:4px}
+.shape-choice p{font-size:11px;line-height:1.85;color:#748269;margin:10px 0 0}
+.shape-choice .shape-transfer{color:#4e6b45;border-top:1px solid #dbe4d1;padding-top:9px}
 .hand-plan-heading h3{font-size:16px;font-weight:600;margin:0 0 6px}
 .hand-plan-heading>p{font-size:11px;color:#7a856e;line-height:1.8;margin:0 0 14px}
 .hand-plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
