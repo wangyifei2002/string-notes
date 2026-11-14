@@ -58,7 +58,7 @@ window.LESSON = {
     "verified": "已取得并解码 Andy Guitar 原视频 7RRblNpN_7A：文件约446.53秒，音轨48 kHz立体声，分析副本22.05 kHz单声道。选取原片04:20.5–06:18.5的完整指弹弹唱，共118秒；前后的讲解和另一遍扫弦示范不计入本课时间轴。画面显示没有变调夹。",
     "score": "同一作者的配套课程提供小和弦图并明确讲解Am、Em、G、Dm的选弦，与此完整演奏相对应。没有取得本次演出的逐音六线谱；作者链接的第三方和弦表未能读取，不用它证明时点或原指法。",
     "analysis": "作者教程给出四个和弦，局部低音/频谱与画面对照支持A小调中心及Am–Em–G–Am、Em–Dm–Am连接。时点仍是约±0.25秒的分析候选；慢拍约66–73 BPM随演奏变化。人声弱起及中段吉他留白不补写正在发声的和弦。未进行人工逐音听写，音轨可解码不等于每个音已听辨确认。",
-    "teaching": "按标准调弦和作者讲解的选弦重建教学配音，指号是可行建议；-1 包括本次不拨的弦，不等于必须左手消音。逐指动作仍以实际画面为准。"
+    "teaching": "将左手建议手形与右手选弦分开：Em 可保持022000、G可保持320003的完整开放手形，同时按作者讲解仅拨指定四根弦。未拨的按位仍可留住；完整手形与指号为教学建议，未逐帧核实每次原演奏动作。慢练拨弦顺序另行标注，试音只包含指定发声音。"
   },
   "uiRules": [
     "指法数组从六弦到一弦，-1 表示本次不发声，0 表示空弦。",
@@ -67,7 +67,9 @@ window.LESSON = {
     "指板音级相对当前和弦根音；整曲根音级数相对 A，两者不能混淆。",
     "Am、Em、G、Dm 为三和弦，没有七音；Am7 或 E7 只出现在明确标注的创作变化中。",
     "原视频时点等于本页音乐时点加 sourceStart；视频中的讲解与其他演示不算这首完整指弹演奏。",
-    "入门旋律 C→B→C 与60 BPM练习是教学改写，不是原唱旋律或原片逐音转录。"
+    "入门旋律 C→B→C 与60 BPM练习是教学改写，不是原唱旋律或原片逐音转录。",
+    "左手完整按法与右手发声独立：handPlan.gripFrets 为六弦到一弦的建议手形，null 为不指定按位，0 为空弦；handPlan.pluckStrings 指定本次拨响的弦。",
+    "按住但未拨的音可以显示在指板上，但不加入本次和弦试音或实际发声音列表。handPlan.steps 是慢练顺序，不是原视频逐拍拨弦定稿。"
   ],
   "segments": [],
   "catalog": [
@@ -196,7 +198,51 @@ window.LESSON = {
         "difference": "扫弦练习可加入1弦空弦 E；该音是五音，和弦性质不变。"
       },
       "sourceStatus": "matched_author_lesson",
-      "timingStatus": "assigned_by_full_performance_analysis"
+      "timingStatus": "assigned_by_full_performance_analysis",
+      "handPlan": {
+        "gripFrets": [
+          null,
+          0,
+          2,
+          2,
+          1,
+          0
+        ],
+        "fingerNumbers": [
+          null,
+          null,
+          2,
+          3,
+          1,
+          null
+        ],
+        "leftText": "食指按2弦1品，中指按4弦2品，无名指按3弦2品；5弦与1弦保持空弦。完整开放 Am 的手形为 x02210。",
+        "pluckStrings": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹5弦 A2、4弦 E3、3弦 A3、2弦 C4。慢练可先用拇指拨5弦低音，再把4、3、2弦作为一组拨响。6、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 5弦 A2",
+            "strings": [
+              5
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 E3、3弦 A3、2弦 C4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_full_grip_with_author_lesson_string_selection",
+        "evidence": "本次拨弦集合对应同一作者的配套教学；完整开放手形和左手指号是明确给出的练习建议，未逐帧确认每次原演奏是否保留所有未拨弦的手指。下面两步是慢练分解，不标为原片逐拍拨弦谱。"
+      }
     },
     {
       "id": "em",
@@ -323,7 +369,51 @@ window.LESSON = {
         "difference": "完整扫弦加入5弦 B 和1弦 E，仍为 E–G–B。"
       },
       "sourceStatus": "matched_author_lesson",
-      "timingStatus": "assigned_by_full_performance_analysis"
+      "timingStatus": "assigned_by_full_performance_analysis",
+      "handPlan": {
+        "gripFrets": [
+          0,
+          2,
+          2,
+          0,
+          0,
+          0
+        ],
+        "fingerNumbers": [
+          null,
+          1,
+          2,
+          null,
+          null,
+          null
+        ],
+        "leftText": "食指按5弦2品，中指按4弦2品；6、3、2、1弦保持空弦。这里建议保持完整开放 Em（022000）的手形，5弦的食指仍留在原位。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 E2、4弦 E3、3弦 G3、2弦 B3。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5弦虽然按住，本次不拨。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 E2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 E3、3弦 G3、2弦 B3",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_full_grip_with_author_lesson_string_selection",
+        "evidence": "本次拨弦集合对应同一作者的配套教学；完整开放手形和左手指号是明确给出的练习建议，未逐帧确认每次原演奏是否保留所有未拨弦的手指。下面两步是慢练分解，不标为原片逐拍拨弦谱。"
+      }
     },
     {
       "id": "g",
@@ -450,7 +540,51 @@ window.LESSON = {
         "difference": "改扫弦时同时按5弦2品 B 与1弦3品 G。不要只按低音 G 就扫六根弦：那会额外带入 A、E，改变音组。"
       },
       "sourceStatus": "matched_author_lesson",
-      "timingStatus": "assigned_by_full_performance_analysis"
+      "timingStatus": "assigned_by_full_performance_analysis",
+      "handPlan": {
+        "gripFrets": [
+          3,
+          2,
+          0,
+          0,
+          0,
+          3
+        ],
+        "fingerNumbers": [
+          2,
+          1,
+          null,
+          null,
+          null,
+          3
+        ],
+        "leftText": "中指按6弦3品，食指按5弦2品，无名指按1弦3品；4、3、2弦保持空弦。这里建议保持完整开放 G（320003）的手形。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 G2、4弦 D3、3弦 G3、2弦 B3。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦虽然按住，本次不拨。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 G2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 D3、3弦 G3、2弦 B3",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_full_grip_with_author_lesson_string_selection",
+        "evidence": "本次拨弦集合对应同一作者的配套教学；完整开放手形和左手指号是明确给出的练习建议，未逐帧确认每次原演奏是否保留所有未拨弦的手指。下面两步是慢练分解，不标为原片逐拍拨弦谱。"
+      }
     },
     {
       "id": "dm",
@@ -577,7 +711,51 @@ window.LESSON = {
         "difference": "此四声部已经是常用开放 Dm，从4弦起扫即可。"
       },
       "sourceStatus": "matched_author_lesson",
-      "timingStatus": "assigned_by_full_performance_analysis"
+      "timingStatus": "assigned_by_full_performance_analysis",
+      "handPlan": {
+        "gripFrets": [
+          null,
+          null,
+          0,
+          2,
+          3,
+          1
+        ],
+        "fingerNumbers": [
+          null,
+          null,
+          null,
+          2,
+          3,
+          1
+        ],
+        "leftText": "食指按1弦1品，中指按3弦2品，无名指按2弦3品；4弦保持空弦。5、6弦无需新增按位，手形为 xx0231。",
+        "pluckStrings": [
+          4,
+          3,
+          2,
+          1
+        ],
+        "rightText": "本次只弹4弦 D3、3弦 A3、2弦 D4、1弦 F4。慢练可先用拇指拨4弦低音，再把3、2、1弦作为一组拨响。6、5弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 4弦 D3",
+            "strings": [
+              4
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 3弦 A3、2弦 D4、1弦 F4",
+            "strings": [
+              3,
+              2,
+              1
+            ]
+          }
+        ],
+        "status": "teaching_full_grip_with_author_lesson_string_selection",
+        "evidence": "本次拨弦集合对应同一作者的配套教学；完整开放手形和左手指号是明确给出的练习建议，未逐帧确认每次原演奏是否保留所有未拨弦的手指。下面两步是慢练分解，不标为原片逐拍拨弦谱。"
+      }
     }
   ],
   "ui": {

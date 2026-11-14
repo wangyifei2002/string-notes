@@ -38,6 +38,26 @@
   let name=candidate?.label||(sounding.length===0?'空白指板':unique===1?`${flat[rootPc]} · 单音`:'未命名音组');
   return{name,quality,rootPc,tones,notes:expanded,candidates};
  }
+ function currentHandPlan(){
+  if(!custom&&!melodyNote)return current().handPlan;
+  return {gripFrets:frets.map(f=>f<0?null:f),fingerNumbers:frets.map((f,i)=>melodyNote&&6-i===melodyNote.string?melodyNote.finger:null),pluckStrings:frets.flatMap((f,i)=>f>=0?[6-i]:[]),steps:[],rightText:melodyNote?'只拨旋律音所在的一根弦。':'自由指板中，选中的音都参与试音。',evidence:melodyNote?'独立旋律教学练习，不与原片逐音同步。':'当前为自由选音；回到歌曲按法可查看左右手分工。'};
+ }
+ function gripNote(view,i,f){
+  const n=core.noteAt(i,f),canonical=view.tones.find(t=>t.pc===n.pc),info=intervalInfo((n.pc-(view.rootPc??n.pc)+12)%12,view.quality),degree=canonical?.degree||info.degree;
+  const spelling=view.quality?spellTone(view.rootPc,degree,n.midi):{name:n.flatName,octave:n.octave};
+  return {...n,name:spelling.name,label:spelling.name+spelling.octave,degree:view.quality?degree:'',string:6-i,fret:f};
+ }
+ function renderHandPlan(view){
+  const plan=currentHandPlan(),available=!!plan&&view.notes.length>0;
+  $('handPlan').hidden=!available;
+  $('boardSelectionHelp').textContent=available?'实心音点：本次拨响。虚线音点：保留按位或空弦，本次不拨。左侧 × 表示不拨；0 表示拨空弦；● 表示拨按住的弦。':'此处没有已指定的左手按法与右手选弦；空指板不补写动作。';
+  if(!available){$('pickingSteps').innerHTML='';$('rightHandSummary').textContent='';$('pluckStringSummary').textContent='';$('handPlanEvidence').textContent='';return;}
+  $('rightHandSummary').textContent=plan.rightText;
+  $('handPlanEvidence').textContent=plan.evidence;
+  $('pluckStringSummary').textContent='本次拨弦：'+plan.pluckStrings.map(string=>{const n=view.notes.find(note=>note.string===string);return`${string}弦 ${n?.name||''}`;}).join(' · ');
+  $('pickingSteps').innerHTML=plan.steps.map((step,index)=>`<button type="button" class="pick-step" data-pick-step="${index}" aria-label="试听步骤 ${index+1}：${esc(step.label)}"><small>步骤 ${index+1} · 合成示范</small><strong>${esc(step.label)}</strong><span>${step.strings.map(string=>{const n=view.notes.find(note=>note.string===string);return`${string}弦 ${esc(n?.name||'')}`;}).join(' + ')}</span></button>`).join('');
+  $('pickingSteps').hidden=!plan.steps.length;
+ }
  function notify(message){$('toast').textContent=message;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),2600);}
  function pauseOtherMedia(except){if(window.MediaPlayers)return window.MediaPlayers.pauseAll(except);document.querySelectorAll('audio,video').forEach(el=>{if(el!==except)el.pause();});}
  function stopSynth(){scheduledVisual.forEach(clearTimeout);scheduledVisual=[];liveOsc.forEach(n=>{try{n.stop();}catch{}});liveOsc=[];}
@@ -82,19 +102,33 @@
   $('soloPractice').innerHTML=`<div class="eyebrow">Solo · 逐音练习按位</div><h3>先练一句旋律，再听原片。</h3><p>下面是依据分析材料设计的简化练习，音序、节奏和把位均为教学改写。原片播放时只跟随和声候选，不把这些练习音伪装成逐音转录。</p><div class="solo-phrase-tabs">${phrases.map((p,i)=>`<button data-solo-phrase="${i}" class="${i===activePhrase?'selected':''}">${i+1} · ${esc(p.title)}</button>`).join('')}</div><p><strong>${clock(phrase.start)}–${clock(phrase.end)}</strong> · ${esc(phrase.exercise)}</p><div class="solo-note-buttons">${phrase.teachingNotes.map((n,i)=>`<button data-solo-note="${i}" class="${melodyNote?.practiceIndex===i?'selected':''}"><strong>${esc(n.name)}</strong><span>${n.string}弦 ${n.fret}品 · ${n.finger}指</span></button>`).join('')}</div><div class="solo-practice-actions"><button class="secondary" data-solo-action="sequence">♪ 听简化练习</button><button class="primary" data-solo-action="original">▶ 对照这一句原片</button><button class="text-button" data-solo-action="restore">回到全曲跟随</button></div><small>${esc(phrase.teachingLabel||'教学音序 · 不按原演奏时间逐音同步')}</small>`;
  }
 
- function renderBoard(view){let html='<div class="fret-head"><span>弦号</span>'+Array.from({length:13},(_,f)=>`<span>${f===0?'空弦':f}</span>`).join('')+'</div>';
-  for(let i=5;i>=0;i--){const string=6-i, note=view.notes.find(n=>n.string===string);html+=`<div class="fret-row" style="--string-width:${1+(5-i)*.32}px"><div class="string-label"><b>${string}</b><span>${['E','A','D','G','B','E'][i]}</span><button class="mute-button ${frets[i]<0?'active':''}" data-mute="${i}" aria-label="${string}弦${frets[i]<0?'开启空弦':'静音'}">${frets[i]<0?'×':'○'}</button></div>`;
-   for(let f=0;f<=12;f++){const n=core.noteAt(i,f),active=frets[i]===f, role=note?roleOf(note.degree):'root', finger=custom?'':(melodyNote?(melodyNote.string===string?melodyNote.finger:''):(current().fingerNumbers?.[i]??''));let text=note?.name??n.flatName;
+ function renderBoard(view){
+  const plan=currentHandPlan();
+  let html='<div class="fret-head"><span>弦号</span>'+Array.from({length:13},(_,f)=>`<span>${f===0?'空弦':f}</span>`).join('')+'</div>';
+  for(let i=5;i>=0;i--){
+   const string=6-i,soundingNote=view.notes.find(n=>n.string===string),grip=plan?.gripFrets[i],unplayed=frets[i]<0;
+   const status=unplayed?'本次不拨':frets[i]===0?'拨空弦':`拨按在${frets[i]}品的弦`;
+   html+=`<div class="fret-row" style="--string-width:${1+(5-i)*.32}px"><div class="string-label"><b>${string}</b><span>${['E','A','D','G','B','E'][i]}</span><button class="mute-button ${unplayed?'active':''}" data-mute="${i}" title="${status}" aria-label="${string}弦，${status}；点击${unplayed?'开启空弦':'取消发声'}">${unplayed?'×':frets[i]===0?'0':'●'}</button></div>`;
+   for(let f=0;f<=12;f++){
+    const n=core.noteAt(i,f),active=frets[i]===f,held=!active&&grip===f,note=active?soundingNote:held?gripNote(view,i,f):null;
+    const role=note?roleOf(note.degree):'root',finger=custom?'':(plan?.fingerNumbers[i]??''),identity=chordRole(note),identityText=[identity.degree,identity.name].filter(Boolean).join(' ');
+    let text=note?.name??n.flatName;
     if(labelMode==='degree')text=note?.degree??'·';if(labelMode==='finger')text=custom?'·':finger||'0';
-    const identity=chordRole(note),identityText=[identity.degree,identity.name].filter(Boolean).join(' ');
-    let content=active?`<span class="note-dot" data-finger="${labelMode==='finger'?'':finger}" style="--role-color:${colors[role]}">${esc(text)}</span><span class="note-role" data-degree="${esc(identity.degree)}">${identity.degree&&labelMode!=='degree'?`<b>${esc(identity.degree)}</b> `:''}${esc(identity.name)}</span>`:showAll?`<span class="ghost-note">${esc(n.flatName)}</span>`:([3,5,7,9,12].includes(f)&&i===3?'<span class="position-dot"></span>':'');
-    html+=`<button class="fret-cell ${f===0?'open':''} ${active?'is-active':''}" data-string="${i}" data-fret="${f}" aria-pressed="${active}" aria-label="${string}弦${f===0?'空弦':f+'品'}，${active&&note?note.label:n.flatName+n.octave}${active?'，'+esc(identityText)+(finger?'，左手'+finger+'指':'')+'，已选择':''}">${content}</button>`;
-   }html+='</div>';
-  }const scroller=document.querySelector('.board-scroll'),previousScroll=scroller.scrollLeft;$('fretboard').innerHTML=html;
-  if(custom){scroller.scrollLeft=previousScroll;}else if(scroller.scrollWidth>scroller.clientWidth){const active=[...$('fretboard').querySelectorAll('.is-active')];if(active.length){const left=Math.min(...active.map(el=>el.offsetLeft)),right=Math.max(...active.map(el=>el.offsetLeft+el.offsetWidth));scroller.scrollLeft=Math.max(0,(left+right)/2-scroller.clientWidth/2);}}
+    let content='';
+    if(active)content=`<span class="note-dot" data-finger="${labelMode==='finger'?'':finger}" style="--role-color:${colors[role]}">${esc(text)}</span><span class="note-role" data-degree="${esc(identity.degree)}">${identity.degree&&labelMode!=='degree'?`<b>${esc(identity.degree)}</b> `:''}${esc(identity.name)}</span>`;
+    else if(held)content=`<span class="held-dot" data-finger="${labelMode==='finger'?'':finger}" style="--role-color:${colors[role]}">${esc(text)}</span><span class="held-role" data-degree="${esc(identity.degree)}">${esc(identityText)}<small>${f===0?'空弦':'按住'}·不拨</small></span>`;
+    else if(showAll)content=`<span class="ghost-note">${esc(n.flatName)}</span>`;
+    else if([3,5,7,9,12].includes(f)&&i===3)content='<span class="position-dot"></span>';
+    const aria=`${string}弦${f===0?'空弦':f+'品'}，${note?note.label:n.flatName+n.octave}${active||held?'，'+identityText+(finger?'，左手'+finger+'指':'')+(active?'，本次拨响，已选择':f===0?'，保留空弦，本次不拨':'，按住但本次不拨'):''}`;
+    html+=`<button class="fret-cell ${f===0?'open':''} ${active?'is-active':''} ${held?'is-held':''}" data-string="${i}" data-fret="${f}" aria-pressed="${active}" aria-label="${esc(aria)}">${content}</button>`;
+   }
+   html+='</div>';
+  }
+  const scroller=document.querySelector('.board-scroll'),previousScroll=scroller.scrollLeft;$('fretboard').innerHTML=html;
+  if(custom){scroller.scrollLeft=previousScroll;}else if(scroller.scrollWidth>scroller.clientWidth){const markers=[...$('fretboard').querySelectorAll('.is-active,.is-held')];if(markers.length){const left=Math.min(...markers.map(el=>el.offsetLeft)),right=Math.max(...markers.map(el=>el.offsetLeft+el.offsetWidth));scroller.scrollLeft=Math.max(0,(left+right)/2-scroller.clientWidth/2);}}
  }
- function render(){const view=getView(),s=current(),pos=visibleIndices().indexOf(selected);renderSteps();renderBoard(view);renderSolo();updatePracticeMap();
-  const section=selectedSection();$('songContext').hidden=false;$('songContext').innerHTML=`<strong>${esc(section.title)} · ${clock(s.start)}–${clock(s.end)}</strong><span>${melodyNote?'正在查看独立的Solo教学音；点击“回到全曲跟随”恢复原片时间轴。':s.notes.length?'全曲连续跟随 · 此处显示可弹的教学配音；不是原演奏逐指复原。':esc(s.analysisEvent?.practiceMessage||'此处未确定完整和弦。空指板表示尚未标注，不表示原演奏静音。')}</span>`;
+ function render(){const view=getView(),s=current(),pos=visibleIndices().indexOf(selected);renderSteps();renderBoard(view);renderHandPlan(view);renderSolo();updatePracticeMap();
+  const section=selectedSection();$('songContext').hidden=false;$('songContext').innerHTML=`<strong>${esc(section.title)} · ${clock(s.start)}–${clock(s.end)}</strong><span>${melodyNote?'正在查看独立的Solo教学音；点击“回到全曲跟随”恢复原片时间轴。':s.notes.length?'左手按法与右手选弦分别显示 · 教学方案，不代表原演奏逐指复原。':esc(s.analysisEvent?.practiceMessage||'此处未确定完整和弦。空指板表示尚未标注，不表示原演奏静音。')}</span>`;
   $('followSong').disabled=false;document.querySelector('.cover-label').textContent='完整演奏 · '+shortClock(data.source.duration);
   const harmony=s.analysisEvent;
   $('harmonicContext').hidden=custom||!!melodyNote||!harmony;$('harmonicContext').innerHTML=harmony?`<div><small>${esc(window.FULL_ANALYSIS.overview.tonic)} 调性参照 · 根音级数</small><strong>${esc(harmony.rootDegree)} <span>${esc(harmony.roman)}</span></strong></div><p>${esc(harmony.functionText)}</p>`:'';
@@ -105,9 +139,9 @@
   $('practiceEvidence').textContent=melodyNote?'教学改写：该按位可以发出所示音高，但不代表原演奏者当时的动作。':`${({confirmed:'已核对',verified:'已核对',high:'较一致候选',medium:'分析候选',low:'需复核'})[harmony.confidence]||'待核对'}：${harmony.evidence||'暂无可靠原音指法。'}`;
   $('toneChips').innerHTML=view.tones.map(t=>`<div class="tone-chip ${t.present===false?'omitted':''}" style="--role-color:${colors[roleOf(t.degree)]}"><i></i><b>${esc(t.name)}</b><span>${esc(t.degree)}${t.present===false?' · 省略':''}</span></div>`).join('')||'<span class="omission-note">还没有发声音</span>';
   $('omissionNote').textContent=view.tones.some(t=>t.present===false)?'虚线音未在此指法中弹出。':'';
-  $('stringNotes').innerHTML=frets.map((f,i)=>{const n=view.notes.find(n=>n.string===6-i);const role=n?(custom&&!view.candidates.length&&n.degree==='1'?'参照音':n.role):'';return`<button class="string-note ${f<0?'muted':''}" data-play-string="${i}" style="--role-color:${n?colors[roleOf(n.degree)]:'#aaa'}"><small>${6-i} 弦 · ${f<0?'不弹':f===0?'空弦':f+' 品'}</small><b>${n?esc(n.label):'×'}</b><span>${n?esc(n.degree+' · '+role):(!custom&&!melodyNote&&!s.notes.length?'未标注':'轻触止音')}</span></button>`;}).join('');
-  $('tabText').textContent=frets.map(f=>f<0?'x':f).join(' ');
-  $('fingerGuide').textContent=custom?'这是你选择的按位。自由指板不自动指定左手指号；先让每个音清楚发声。':melodyNote?`左手${melodyNote.finger}指按第${melodyNote.string}弦第${melodyNote.fret}品，只拨这一根弦。建议指号可按手型调整，这是教学按位。`:s.leftHand||s.fingerGuide;
+  $('stringNotes').innerHTML=frets.map((f,i)=>{const n=view.notes.find(n=>n.string===6-i);const role=n?(custom&&!view.candidates.length&&n.degree==='1'?'参照音':n.role):'';return`<button class="string-note ${f<0?'muted':''}" data-play-string="${i}" style="--role-color:${n?colors[roleOf(n.degree)]:'#aaa'}"><small>${6-i} 弦 · ${f<0?'不弹':f===0?'空弦':f+' 品'}</small><b>${n?esc(n.label):'×'}</b><span>${n?esc(n.degree+' · '+role):(!custom&&!melodyNote&&!s.notes.length?'未标注':currentHandPlan()?.gripFrets[i]>0?'按住但不拨':currentHandPlan()?.gripFrets[i]===0?'空弦但不拨':'本次不拨')}</span></button>`;}).join('');
+  $('tabText').textContent=(currentHandPlan()?.gripFrets||frets).map(f=>f===null||f<0?'—':f).join(' ');
+  $('fingerGuide').textContent=custom?'这是你选择的按位。自由指板不自动指定左手指号；先让每个音清楚发声。':melodyNote?`左手${melodyNote.finger}指按第${melodyNote.string}弦第${melodyNote.fret}品，只拨这一根弦。建议指号可按手型调整，这是教学按位。`:s.handPlan?.leftText||s.leftHand||s.fingerGuide;
   $('alternateWrap').hidden=custom||!!melodyNote||!s.fingerAlternatives?.length;$('alternateText').textContent=(s.fingerAlternatives||[]).join(' ');
   $('whyTitle').textContent=melodyNote?'一个按位，对应一个音高':view.notes.length===0?'这里保留不确定性':view.quality?`${view.tones.filter(t=>t.present!==false).map(t=>t.name).join(' · ')} → ${view.name}`:'从实际发声音开始';
   $('whyText').textContent=custom?(view.candidates.length?'和弦名称来自实际音高组合。同一个音可出现在不同弦上；把位与音色可能改变。':'一个或少数音高不能唯一决定完整和弦，继续添加音来比较。'):melodyNote?'点击上方的下一个练习音，观察手指怎样移动。旋律练习的音序由教学设计，不声称与原音逐个对应。':s.explanation;
@@ -137,7 +171,8 @@
  function restore({seek:shouldSeek=true}={}){custom=false;melodyNote=null;frets=[...current().frets];$('followSong').checked=true;if(shouldSeek)seek(current().start);render();}
  $('lessonSteps').addEventListener('click',e=>{let el=e.target.closest('[data-step]');if(el)selectChord(Number(el.dataset.step));});
  $('fretboard').addEventListener('click',e=>{let cell=e.target.closest('[data-string]'),mute=e.target.closest('[data-mute]');if(!cell&&!mute)return;enterCustom();if(mute){let i=Number(mute.dataset.mute);frets[i]=frets[i]<0?0:-1;if(frets[i]>=0)playNotes([core.noteAt(i,0).midi]);}else{let i=Number(cell.dataset.string),f=Number(cell.dataset.fret);frets[i]=frets[i]===f?-1:f;if(frets[i]>=0)playNotes([core.noteAt(i,f).midi]);}render();});
- $('stringNotes').addEventListener('click',e=>{const b=e.target.closest('[data-play-string]');if(!b)return;let i=Number(b.dataset.playString),n=core.noteAt(i,frets[i]);if(n)playNotes([n.midi]);else notify(`${6-i} 弦不弹，保持静音。`);});
+ $('stringNotes').addEventListener('click',e=>{const b=e.target.closest('[data-play-string]');if(!b)return;let i=Number(b.dataset.playString),n=core.noteAt(i,frets[i]);if(n)playNotes([n.midi]);else notify(`${6-i} 弦本次不拨；左手状态见按法图。`);});
+ $('pickingSteps').addEventListener('click',e=>{const button=e.target.closest('[data-pick-step]');if(!button)return;const step=currentHandPlan()?.steps[Number(button.dataset.pickStep)];if(!step)return;const notes=step.strings.map(string=>core.noteAt(6-string,frets[6-string])).filter(Boolean);playNotes(notes.map(n=>n.midi),.025);notify('教学选弦合成示范 · '+step.label);});
  $('playChord').addEventListener('click',()=>{playNotes(core.notesFor(frets).filter(Boolean).map(n=>n.midi));notify('合成试音 · 实际发声的和弦音');});
  $('playArpeggio').addEventListener('click',()=>playNotes(core.notesFor(frets).filter(Boolean).map(n=>n.midi),.48));
  $('playMelody').addEventListener('click',()=>playNotes([...document.querySelectorAll('[data-melody]')].map(b=>Number(b.dataset.melody)),.85));
@@ -175,7 +210,7 @@
  video.addEventListener('loadedmetadata',()=>{applyPendingSeek();updateFromTime();});
  video.addEventListener('canplay',()=>{applyPendingSeek();updateFromTime();});
  function showAt(id,event){const index=events.findIndex(e=>Math.abs(e.start-event.start)<.01&&e.voicingId===id);if(index<0)return false;video.pause();scope='section';sectionFilter=practice.sectionAt(event.start);selectChord(index);return true;}
- $('practiceSection').innerHTML='<option value="all">整首演奏 · 00:00–04:07</option>'+sections.map((s,i)=>`<option value="${i}">${String(i+1).padStart(2,'0')} · ${esc(s.title)} · ${clock(s.start)}</option>`).join('');
+ $('practiceSection').innerHTML=`<option value="all">整首演奏 · 00:00–${shortClock(data.source.duration)}</option>`+sections.map((s,i)=>`<option value="${i}">${String(i+1).padStart(2,'0')} · ${esc(s.title)} · ${clock(s.start)}</option>`).join('');
  $('practiceSection').onchange=e=>selectSection(e.target.value);
  $('practiceMap').addEventListener('click',e=>{const button=e.target.closest('[data-practice-section]');if(button&&$('practiceMap').contains(button))selectSection(button.dataset.practiceSection);});
  $('soloPractice').addEventListener('click',e=>{

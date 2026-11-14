@@ -19,6 +19,22 @@
     return items.findIndex(item => t >= item.start && t < item.end);
   }
   const sectionAt = t => indexAt(sections, t);
+  function handPlanFor(voicing, shape) {
+    if (!shape) return null;
+    const supplied = shape.handPlan || {};
+    // Keep sounded notes independent of the left-hand shape. Unspecified
+    // strings are null; a retained/open but unplucked string may be >= 0.
+    const gripFrets = (supplied.gripFrets || voicing.frets.map(f => f < 0 ? null : f)).slice();
+    const fingerNumbers = (supplied.fingerNumbers || voicing.fingerNumbers).slice();
+    const pluckStrings = voicing.frets.flatMap((f,i) => f >= 0 ? [6-i] : []);
+    for (let i=0;i<6;i++) if (voicing.frets[i]>=0) gripFrets[i]=voicing.frets[i];
+    const steps = (supplied.steps || pluckStrings.map(string => ({label:`拨第 ${string} 弦`,strings:[string]})))
+      .map(step => ({...step,strings:step.strings.filter(string => pluckStrings.includes(string))})).filter(step => step.strings.length);
+    return {...supplied,gripFrets,fingerNumbers,pluckStrings,steps,
+      leftText:supplied.leftText || voicing.leftHand || voicing.fingerGuide,
+      rightText:supplied.rightText || `本次只拨第 ${pluckStrings.join('、')} 弦；其他弦不拨。`,
+      evidence:supplied.evidence || '这是当前配音的教学按法与选弦，不是原演奏右手节奏的逐拍转录。'};
+  }
   function emptyVoicing(kind, event) {
     const text = kind === 'solo'
       ? '这一处以Solo旋律为主，完整和弦与原版逐音指法尚未核准。请使用下方独立的简化旋律练习；空指板不表示原演奏没有声音。'
@@ -42,6 +58,7 @@
     const contextText = `${section?.title || '全曲'} · ${event.functionText || '局部和声作用待核对。'}`;
     return {
       ...voicing,
+      handPlan: handPlanFor(voicing, shape),
       id: `event-${index}`,
       eventIndex: index,
       voicingId: shape?.id || null,

@@ -48,17 +48,18 @@ window.LESSON = {
     "verified": "已核实来源编号、标题、完整音轨解码、时长与采样信息。",
     "score": "未取得作者原谱或权威六线谱。",
     "analysis": "和弦名与时点来自局部频谱、音高候选和画面对照，尚未完成人工逐音听写校订。",
-    "teaching": "指板显示的是按标准调弦重新配音的教学按法；可以学习这些音怎样构成和弦，不代表原演奏者的逐指动作。"
+    "teaching": "按标准调弦重新配音的教学按法，分别列出左手怎么按和右手拨哪些弦。右手先低音、再上方音组是慢练设计，原演奏逐指动作与逐拍拨弦顺序尚未定稿；未拨弦不自动等于左手必须松开。"
   },
   "uiRules": [
     "指法数组从六弦到一弦；-1 表示不发声，0 表示空弦。",
     "根音可能出现不止一次；识别和弦须按不同音高类判断，不能用点的数量判断和弦种类。",
-    "和弦构成列表可以显示省略音，但指板和试音必须只用实际按出的音。",
     "点击自由指板改变按位后，应显示新组成音与识别候选，不继续沿用歌曲原候选和弦名。",
     "原片段用原视频绝对时间标注；播放器内时点必须减去 29.55 秒。",
     "简化练习的 60 BPM 和 4/4 是教学设定，不是原演奏节奏确认结果。",
     "fingerNumbers 与 frets 同顺序，1食指、2中指、3无名指、4小指；null 表示本教学指法不按该弦。barres 仅为小横按辅助线，更高品位的按指优先决定实际发声音。",
-    "明确标注第1弦最细、第6弦最粗；品位、弦号与左手指号是三种不同的数字，不能混作同一种标记。"
+    "明确标注第1弦最细、第6弦最粗；品位、弦号与左手指号是三种不同的数字，不能混作同一种标记。",
+    "左手完整按法与右手发声独立：handPlan.gripFrets 为六弦到一弦的建议手形，null 为不指定按位，0 为空弦；handPlan.pluckStrings 指定本次拨响的弦。",
+    "按住但未拨的音可以显示在指板上，但不加入本次和弦试音或实际发声音列表。handPlan.steps 是慢练顺序，不是原视频逐拍拨弦定稿。"
   ],
   "segments": [
     {
@@ -228,7 +229,51 @@ window.LESSON = {
       ],
       "leftHand": "教学建议：食指按五弦五品，中指按三弦五品，无名指按四弦六品，小指按二弦六品。只拨五、四、三、二弦。",
       "barres": [],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          null,
+          5,
+          6,
+          5,
+          6,
+          null
+        ],
+        "fingerNumbers": [
+          null,
+          1,
+          3,
+          2,
+          4,
+          null
+        ],
+        "leftText": "食指按5弦5品，中指按3弦5品，无名指按4弦6品，小指按2弦6品。",
+        "pluckStrings": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹5弦 D3、4弦 A♭3、3弦 C4、2弦 F4。慢练可先用拇指拨5弦低音，再把4、3、2弦作为一组拨响。6、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 5弦 D3",
+            "strings": [
+              5
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 A♭3、3弦 C4、2弦 F4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "cm7",
@@ -363,7 +408,51 @@ window.LESSON = {
           "toString": 3
         }
       ],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          null,
+          3,
+          5,
+          3,
+          4,
+          null
+        ],
+        "fingerNumbers": [
+          null,
+          1,
+          3,
+          1,
+          2,
+          null
+        ],
+        "leftText": "食指在3品从5弦到3弦作小横按，无名指按4弦5品，中指按2弦4品。横按仍经过4弦，4弦音高由更靠近琴桥的5品决定。",
+        "pluckStrings": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹5弦 C3、4弦 G3、3弦 B♭3、2弦 E♭4。慢练可先用拇指拨5弦低音，再把4、3、2弦作为一组拨响。6、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 5弦 C3",
+            "strings": [
+              5
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 G3、3弦 B♭3、2弦 E♭4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "bbm7",
@@ -498,7 +587,51 @@ window.LESSON = {
           "toString": 2
         }
       ],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          6,
+          null,
+          6,
+          6,
+          6,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          1,
+          1,
+          null
+        ],
+        "leftText": "食指在6品小横按4、3、2弦，中指按6弦6品。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 B♭2、4弦 A♭3、3弦 D♭4、2弦 F4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 B♭2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 A♭3、3弦 D♭4、2弦 F4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "a7",
@@ -633,7 +766,51 @@ window.LESSON = {
           "toString": 2
         }
       ],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          5,
+          null,
+          5,
+          6,
+          5,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          3,
+          1,
+          null
+        ],
+        "leftText": "食指在5品从4弦到2弦作小横按，中指按6弦5品，无名指按3弦6品。3弦由无名指的6品决定音高。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 A2、4弦 G3、3弦 C♯4、2弦 E4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 A2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 G3、3弦 C♯4、2弦 E4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "ab9",
@@ -770,7 +947,51 @@ window.LESSON = {
       ],
       "leftHand": "教学建议：食指按二弦一品，中指按三弦三品，无名指按六弦四品，小指按四弦四品。这个配音跨四个品位，先分别把每个音按清楚，再合起来；若目前跨度不适合，先只练六弦四品低音。",
       "barres": [],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          4,
+          null,
+          4,
+          3,
+          1,
+          null
+        ],
+        "fingerNumbers": [
+          3,
+          null,
+          4,
+          2,
+          1,
+          null
+        ],
+        "leftText": "食指按2弦1品，中指按3弦3品，无名指按6弦4品，小指按4弦4品。跨度较大，可先逐个摆好再合拢，不必勉强拉伸。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 A♭2、4弦 G♭3、3弦 B♭3、2弦 C4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 A♭2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 G♭3、3弦 B♭3、2弦 C4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "adim7",
@@ -905,7 +1126,51 @@ window.LESSON = {
           "toString": 2
         }
       ],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          5,
+          null,
+          4,
+          5,
+          4,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          3,
+          1,
+          null
+        ],
+        "leftText": "食指在4品从4弦到2弦作小横按，中指按6弦5品，无名指按3弦5品。3弦由无名指的5品决定音高。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 A2、4弦 G♭3、3弦 C4、2弦 E♭4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 A2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 G♭3、3弦 C4、2弦 E♭4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "bb7",
@@ -1052,7 +1317,51 @@ window.LESSON = {
           ],
           "description": "不用横按的替代：食指六弦六品，中指四弦六品，无名指二弦六品，小指三弦七品。按手型舒适度选择。"
         }
-      ]
+      ],
+      "handPlan": {
+        "gripFrets": [
+          6,
+          null,
+          6,
+          7,
+          6,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          3,
+          1,
+          null
+        ],
+        "leftText": "食指在6品从4弦到2弦作小横按，中指按6弦6品，无名指按3弦7品；2弦6品的 F 由食指负责。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 B♭2、4弦 A♭3、3弦 D4、2弦 F4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 B♭2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 A♭3、3弦 D4、2弦 F4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "bb7sharp5",
@@ -1199,7 +1508,51 @@ window.LESSON = {
           ],
           "description": "不横按也可以：食指只按四弦六品，中指六弦六品，无名指三弦七品，小指二弦七品。"
         }
-      ]
+      ],
+      "handPlan": {
+        "gripFrets": [
+          6,
+          null,
+          6,
+          7,
+          7,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          3,
+          4,
+          null
+        ],
+        "leftText": "保留食指在6品从4弦到2弦的小横按、中指6弦6品和无名指3弦7品，增加小指按2弦7品。食指仍保持原来的手形，2弦的音高由小指7品决定。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 B♭2、4弦 A♭3、3弦 D4、2弦 F♯4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 B♭2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 A♭3、3弦 D4、2弦 F♯4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     },
     {
       "id": "eb",
@@ -1339,7 +1692,51 @@ window.LESSON = {
           ],
           "description": "不用横按：食指五弦六品，中指四弦八品，无名指三弦八品，小指二弦八品。"
         }
-      ]
+      ],
+      "handPlan": {
+        "gripFrets": [
+          null,
+          6,
+          8,
+          8,
+          8,
+          null
+        ],
+        "fingerNumbers": [
+          null,
+          1,
+          3,
+          3,
+          3,
+          null
+        ],
+        "leftText": "食指按5弦6品，无名指在8品小横按4、3、2弦。无名指靠近品丝，手指关节按个人手型调整。",
+        "pluckStrings": [
+          5,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹5弦 E♭3、4弦 B♭3、3弦 E♭4、2弦 G4。慢练可先用拇指拨5弦低音，再把4、3、2弦作为一组拨响。6、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 5弦 E♭3",
+            "strings": [
+              5
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 B♭3、3弦 E♭4、2弦 G4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     }
   ],
   "exercises": [
@@ -1610,7 +2007,51 @@ window.LESSON = {
           "toString": 2
         }
       ],
-      "fingerAlternatives": []
+      "fingerAlternatives": [],
+      "handPlan": {
+        "gripFrets": [
+          3,
+          null,
+          3,
+          4,
+          3,
+          null
+        ],
+        "fingerNumbers": [
+          2,
+          null,
+          1,
+          3,
+          1,
+          null
+        ],
+        "leftText": "中指按6弦3品；食指在3品从4弦到2弦作小横按，无名指按3弦4品。中指边缘可轻触5弦止音，1弦无需新增按位。",
+        "pluckStrings": [
+          6,
+          4,
+          3,
+          2
+        ],
+        "rightText": "本次只弹6弦 G2、4弦 F3、3弦 B3、2弦 D4。慢练可先用拇指拨6弦低音，再把4、3、2弦作为一组拨响。5、1弦均跳过；不拨弦不等于必须松开左手。",
+        "steps": [
+          {
+            "label": "先拨低音 · 6弦 G2",
+            "strings": [
+              6
+            ]
+          },
+          {
+            "label": "再拨上方音组 · 4弦 F3、3弦 B3、2弦 D4",
+            "strings": [
+              4,
+              3,
+              2
+            ]
+          }
+        ],
+        "status": "teaching_grip_and_plucking_exercise",
+        "evidence": "沿用可行教学配音的左手按法；原演奏逐指动作与右手拨弦顺序尚未定稿。只列已有依据的按位，不为未拨的弦猜测额外按指。下面两步是独立的慢练分解。"
+      }
     }
   ]
 };

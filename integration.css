@@ -84,6 +84,29 @@
 .fretboard .fret-row{height:78px}
 .fret-cell .note-role{position:absolute;z-index:3;top:calc(50% + 21px);left:50%;transform:translateX(-50%);white-space:nowrap;line-height:17px;font-size:11px;font-weight:400;color:#34483c;background:#f7f5e9e8;padding:0 2px;border-radius:2px;pointer-events:none}
 .fret-cell .note-role b{font-weight:700}
+.board-selection-help{margin:0 15px 16px;padding:10px 12px;border-radius:6px;background:#f4f6ef;color:#5d6c56;font-size:11px;line-height:1.8}
+.fretboard .fret-row{height:96px}
+.held-dot{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;width:35px;height:35px;border:2px dashed var(--role-color,#879584);border-radius:50%;background:#faf9f2;color:#526650;font-size:14px;font-weight:600;pointer-events:none}
+.held-dot[data-finger]:not([data-finger=""]):after{content:attr(data-finger);position:absolute;right:-4px;top:-6px;display:grid;place-items:center;width:15px;height:15px;border-radius:50%;background:white;border:1px solid #d3dccb;color:#4c6654;font-size:9px;font-weight:400}
+.held-role{position:absolute;z-index:3;top:calc(50% + 20px);left:50%;transform:translateX(-50%);white-space:nowrap;line-height:13px;font-size:10px;color:#586d55;background:#f7f5e9ed;padding:0 2px;border-radius:2px;pointer-events:none}
+.held-role small{display:block;font-size:9px;color:#75816a}
+.hand-plan{margin:16px 0 23px}
+.hand-plan[hidden]{display:none}
+.hand-plan-heading h3{font-size:16px;font-weight:600;margin:0 0 6px}
+.hand-plan-heading>p{font-size:11px;color:#7a856e;line-height:1.8;margin:0 0 14px}
+.hand-plan-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hand-plan-grid .explain-card{min-width:0;padding:21px}
+.hand-plan-grid .grip-key{font-size:10px;color:#87917c;margin-top:-5px}
+.picking-card h3{font-size:15px;line-height:1.65;letter-spacing:0}
+.picking-steps{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pick-step{flex:1;min-width:110px;border:1px solid #dbe3d3;border-radius:8px;background:#f5f7f0;text-align:left;padding:10px 12px;display:grid;gap:5px}
+.pick-step small{font-size:9px;color:#859278}
+.pick-step strong{font-size:12px;font-weight:600;color:#345540}
+.pick-step span{font-size:11px;color:#687c5d}
+.pick-step:hover{background:#eaf0e1;border-color:#a9bd97}
+.hand-theory{margin-top:18px}
+.hand-theory .explain-card h3{font-family:inherit;font-weight:500;font-size:15px;line-height:1.7;letter-spacing:0;color:var(--green)}
+@media(max-width:760px){.hand-plan-grid{grid-template-columns:1fr}.hand-plan-grid .explain-card{padding:18px}.hand-plan-heading h3{font-size:15px}}
 .embedded-media{background:#172c24;color:#eff4eb}
 .embedded-media-screen{position:relative;width:100%;aspect-ratio:16/9;min-height:200px;background:#0c1713}
 .embedded-media-screen iframe{display:block;width:100%;height:100%;min-height:200px;border:0}
